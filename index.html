@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="blue">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-WABA Workspace — v2</title>
+<!-- DS-only build. No references taken from the PM mock. Flowing navigation via real UI.
+     Top bar = DS Settings top bar (Navigation/Main Nav tokens). ••• = DS Plain Menu.
+     All overlays = DS Modal (top-anchored, left-aligned, CTAs left). Empty state = DS
+     Empty State with a DS illustration. -->
+<style>
+:root, :root[data-accent="blue"]{
+  --accent-master:#0062eb;--accent-s10:#0054cc;--accent-s20:#0048b1;--accent-s40:#00317e;
+  --accent-s50:#002665;--accent-s60:#172138;--accent-s70:#001137;
+  --accent-t40:#86b2fa;--accent-t80:#dce9ff;--accent-t90:#ebf3ff;--accent-t100:#f4f8ff;--accent-t110:#fafcff;
+  --faded-t10:#728099;--faded-t20:#8490a6;--faded-t40:#a8b1c1;--faded-t60:#c9ced9;--faded-t70:#d8dce3;--faded-s10:#525f77;--faded-s30:#3a4457;--faded-s50:#202d4a;
+}
+:root[data-accent="green"]{--accent-master:#0b8844;--accent-s10:#1e8e41;--accent-t40:#9ad1a2;--accent-t90:#eff8f0;--accent-t100:#f6fbf7;}
+:root[data-accent="orange"]{--accent-master:#e56e16;--accent-s10:#c86013;--accent-t40:#f4bf98;--accent-t90:#fdf4ee;--accent-t100:#fef9f6;}
+:root{
+  --text-primary:#202123;--text-secondary:#525354;--text-tertiary:#838485;--text-placeholder:#9c9c9d;--text-disabled:#b5b5b6;--text-on-solid:#fff;
+  --text-brand:var(--accent-master);--text-link:var(--accent-master);--text-link-hover:var(--accent-s10);
+  --text-success:#187b37;--text-warning:#7e600f;--text-error:#f03435;
+  --border-default:#cdcece;--border-subtle:#e7e7e7;--border-strong:#9c9c9d;
+  --border-focus:var(--accent-master);--border-brand:var(--accent-master);--border-selected:var(--accent-master);
+  --border-success:#83c68f;--border-warning:#ff9500;--border-error:#f66d6a;--border-info:#86b2fa;
+  --surface-default:#fff;--surface-sunken:#f2f2f3;--surface-hover:#f2f2f3;--surface-disabled:#e7e7e7;
+  --surface-brand:var(--accent-master);--surface-brand-subtle:var(--accent-t100);
+  --surface-selected:var(--accent-t90);--surface-inverse:#172138;--surface-frame-bg:#f4f8ff;
+  --surface-success-subtle:#eff8f0;--surface-warning-subtle:#fff7ec;--surface-error-subtle:#feefed;--surface-info-subtle:#f4f8ff;
+  --icon-default:#39393b;--icon-subtle:#6a6b6c;--icon-success:#6a9374;--icon-warning:#ffba59;--icon-error:#f03435;--icon-info:var(--accent-master);--icon-bg-disabled:var(--accent-t80);
+  --cta-primary-bg:var(--accent-master);--cta-primary-bg-hover:var(--accent-s10);--cta-primary-fg:#fff;
+  --cta-secondary-bg:#fff;--cta-secondary-bg-hover:#f2f2f3;--cta-secondary-border:#cdcece;--cta-secondary-border-active:#838485;--cta-secondary-fg:#202123;
+  --input-bg:#fff;--input-border:#cdcece;--input-placeholder:#9c9c9d;--input-helper:#6a6b6c;--input-bg-disabled:#f2f2f3;
+  --success-solid:#0b8844;--warning-solid:#ff9500;--error-solid:#f03435;--info-solid:var(--accent-master);--warning-bg:#fcf5e4;--tag-orange-fg:#e56e16;
+  --table-row-hover:#fafcff;--table-header-bg:#f7f7f7;--table-divider:#e7e7e7;--tag-grey-bg:#e9e9e9;--tag-grey-fg:#202123;
+  --overlay-scrim:rgba(31,31,31,0.75);--focus-ring:rgba(0,98,235,0.25);
+  --shadow-m-box:0 0 16px rgba(15,18,23,0.12);--shadow-l-box:0 0 24px rgba(15,18,23,0.16);
+  --radius-xxs:4px;--radius-xs:6px;--radius-s:8px;--radius-m:10px;--radius-l:12px;--radius-full:9999px;
+  --font-family:"Zoho Puvi",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --zc-duration-fast:150ms;--zc-duration-normal:250ms;--zc-easing-standard:cubic-bezier(.4,0,.2,1);--zc-easing-exit:cubic-bezier(.4,0,1,1);
+  /* Navigation / Main Nav tokens (light) */
+  --nav-bg:var(--accent-t100);--nav-text:var(--accent-s70);--nav-stroke:var(--faded-t70);
+  --nav-search-bg:var(--accent-t90);--nav-search-active-bg:var(--accent-t110);
+  --nav-create-bg:var(--accent-t90);--nav-create-stroke:var(--faded-t10);
+  --nav-item-hover-bg:var(--accent-t80);--nav-item-active-bg:var(--accent-t80);
+  --nav-top-text:var(--accent-s50);--nav-top-item-icon:var(--faded-t10);--nav-placeholder-text:var(--faded-t40);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:var(--font-family);}
+body{background:var(--surface-frame-bg);color:var(--text-primary);}
+
+/* ===== TOP BAR (DS Settings — light) ===== */
+.sp-shell{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.sp-topbar{height:48px;flex-shrink:0;display:flex;align-items:center;gap:24px;padding:6px 16px;background-color:var(--nav-bg);}
+.sp-brand{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.sp-brand__logo{width:26px;height:25px;}
+.sp-brand__divider{width:1px;height:22px;background:var(--nav-stroke);}
+.sp-brand__ws{display:flex;align-items:center;gap:8px;font:600 15px/1 var(--font-family);color:var(--nav-top-text);}
+.sp-brand__ws svg{width:12px;height:12px;color:var(--nav-top-item-icon);}
+.sp-topbar__spacer{flex:1;}
+.sp-search{display:flex;align-items:center;gap:8px;width:460px;max-width:42vw;height:36px;padding:0 12px;background-color:var(--nav-search-bg);border:1px solid var(--nav-stroke);border-radius:var(--radius-s);cursor:text;}
+.sp-search:focus-within{border-color:var(--border-focus);background-color:var(--nav-search-active-bg);box-shadow:0 0 0 3px var(--focus-ring);}
+.sp-search__icon{width:15px;height:15px;color:var(--nav-top-item-icon);flex-shrink:0;}
+.sp-search__input{flex:1;min-width:0;border:none;outline:none;background:transparent;font:400 13px/1 var(--font-family);color:var(--text-primary);}
+.sp-search__input::placeholder{color:var(--nav-placeholder-text);}
+.sp-search:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);background-color:var(--surface-default);}
+.sp-topbar__actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.sp-tbtn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:transparent;border-radius:var(--radius-s);cursor:pointer;position:relative;}
+.sp-tbtn:hover{background-color:var(--nav-item-hover-bg);}
+.sp-tbtn svg{width:16px;height:16px;color:var(--nav-top-item-icon);}
+.sp-tbtn--create{background-color:var(--nav-create-bg);border:1px solid var(--nav-create-stroke);}
+.sp-tbadge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;padding:0 4px;border-radius:var(--radius-s);background-color:var(--error-solid);display:flex;align-items:center;justify-content:center;}
+.sp-tbadge span{font:600 9px/1 var(--font-family);color:#fff;}
+.sp-avatar{width:32px;height:32px;border-radius:var(--radius-s);object-fit:cover;margin-left:2px;display:block;}
+
+/* ===== LHS ===== */
+.sp-body{flex:1;min-height:0;display:flex;background:var(--surface-frame-bg);}
+.sp-lhs{width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:2px;padding:12px 8px;background:var(--surface-default);border-top:1px solid var(--border-subtle);border-right:1px solid var(--border-subtle);border-radius:10px 0 0 0;overflow-y:auto;}
+.sp-lhs__back{display:flex;align-items:center;gap:6px;padding:8px 12px;border:none;background:transparent;border-radius:var(--radius-s);font:500 14px/1.4 var(--font-family);color:var(--text-secondary);cursor:pointer;margin-bottom:4px;}
+.sp-lhs__back svg{width:16px;height:16px;}
+.sp-lhs__back:hover{background-color:var(--surface-brand-subtle);color:var(--text-brand);}
+.sp-acc__header{display:flex;align-items:center;width:100%;padding:11px 12px;gap:10px;border:none;background:transparent;border-radius:var(--radius-s);cursor:pointer;font:500 14px/1.4 var(--font-family);color:var(--text-secondary);}
+.sp-acc__header:hover{background-color:var(--surface-brand-subtle);color:var(--text-brand);}
+.sp-acc--open>.sp-acc__header,.sp-acc__header--active{color:var(--text-primary);}
+.sp-acc__icon{width:18px;height:18px;flex-shrink:0;}
+.sp-acc__label{flex:1;text-align:left;}
+.sp-acc__chev{width:12px;height:12px;flex-shrink:0;transition:transform var(--zc-duration-fast) ease;}
+.sp-acc--open .sp-acc__chev{transform:rotate(180deg);}
+/* accordion items animate open/close via grid-template-rows (0fr→1fr) */
+.sp-acc__items{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--zc-duration-normal) var(--zc-easing-standard);}
+.sp-acc--open .sp-acc__items{grid-template-rows:1fr;}
+.sp-acc__itemswrap{overflow:hidden;min-height:0;display:flex;flex-direction:column;}
+@media (prefers-reduced-motion: reduce){.sp-acc__items{transition:none !important;}}
+.sp-nav-item{display:block;padding:10px 12px 10px 40px;border-radius:var(--radius-s);font:400 14px/1.4 var(--font-family);color:var(--text-secondary);text-decoration:none;cursor:pointer;}
+.sp-nav-item:hover{background-color:var(--surface-brand-subtle);color:var(--text-brand);}
+.sp-nav-item--selected{background-color:var(--surface-selected);color:var(--text-brand);font-weight:500;}
+
+/* ===== RHS ===== */
+.sp-content{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surface-default);border-top:1px solid var(--border-subtle);border-radius:0 10px 0 0;overflow:hidden;}
+.screen{display:none;flex:1;min-height:0;flex-direction:column;}
+.screen.is-active{display:flex;}
+.sp-ptopbar{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border-subtle);}
+.sp-ptopbar__title{display:flex;align-items:center;gap:10px;font:600 18px/1.3 var(--font-family);color:var(--text-primary);}
+.sp-ptopbar__title .back{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border:none;background:none;cursor:pointer;color:var(--text-secondary);border-radius:var(--radius-xs);}
+.sp-ptopbar__title .back svg{width:16px;height:16px;}
+.sp-ptopbar__title .back:hover{background:var(--surface-hover);}
+.sp-ptopbar__actions{display:flex;align-items:center;gap:10px;}
+.sp-scroll{flex:1;min-height:0;overflow-y:auto;}
+.sp-section{padding:20px;border-bottom:1px solid var(--border-subtle);}
+.sp-section:last-child{border-bottom:none;}
+.sp-section__head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:36px;margin-bottom:16px;}
+.sp-section__title{font:600 15px/1.3 var(--font-family);color:var(--text-primary);}
+.sp-section__actions{display:flex;align-items:center;gap:10px;}
+
+/* fields */
+.sp-fields{display:flex;align-items:stretch;flex-wrap:wrap;}
+.sp-field{display:flex;flex-direction:column;gap:6px;padding:0 24px;min-width:150px;}
+.sp-field:first-child{padding-left:0;}
+.sp-field + .sp-field{border-left:1px solid var(--border-subtle);}
+.sp-field__label{display:flex;align-items:center;gap:6px;font:400 13px/1.2 var(--font-family);color:var(--text-tertiary);}
+.sp-field__label svg{width:13px;height:13px;color:var(--icon-subtle);}
+.sp-field__value{display:flex;align-items:center;gap:6px;font:500 15px/1.3 var(--font-family);color:var(--text-primary);}
+.sp-field__value.is-ok{color:var(--text-success);}
+.sp-field__value .ok-ic{width:14px;height:14px;color:var(--success-solid);}
+
+/* buttons */
+.sp-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:var(--radius-s);border:none;cursor:pointer;white-space:nowrap;font:500 14px/20px var(--font-family);box-sizing:border-box;flex-shrink:0;transition:background-color var(--zc-duration-fast),border-color var(--zc-duration-fast),color var(--zc-duration-fast);}
+.sp-btn svg{width:14px;height:14px;}
+.sp-btn--primary{background-color:var(--cta-primary-bg);color:var(--cta-primary-fg);}
+.sp-btn--primary:hover{background-color:var(--cta-primary-bg-hover);}
+.sp-btn--secondary{background-color:var(--cta-secondary-bg);border:1px solid var(--border-brand);color:var(--text-link);}
+.sp-btn--secondary:hover{background-color:var(--cta-primary-bg);color:var(--cta-primary-fg);}
+.sp-btn--tertiary{background-color:var(--cta-secondary-bg);border:1px solid var(--cta-secondary-border);color:var(--cta-secondary-fg);}
+.sp-btn--tertiary:hover{background-color:var(--cta-secondary-bg-hover);border-color:var(--cta-secondary-border-active);}
+.sp-btn--icon{width:36px;padding:0;}
+.sp-btn--icon svg{width:16px;height:16px;}
+.sp-linkbtn{display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font:500 14px/1.3 var(--font-family);color:var(--text-link);}
+.sp-linkbtn:hover{color:var(--text-link-hover);text-decoration:underline;}
+
+/* DS Menu (••• more options) */
+.menu-wrap{position:relative;}
+.menu{position:absolute;top:42px;right:0;min-width:220px;background:var(--surface-default);border:1px solid var(--border-subtle);border-radius:var(--radius-s);box-shadow:var(--shadow-m-box);padding:4px;z-index:40;display:none;transform-origin:top;}
+.menu.is-open{animation:menuIn var(--zc-duration-fast) var(--zc-easing-standard);}
+@keyframes menuIn{from{opacity:0;transform:translateY(-4px) scaleY(.98);}to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion: reduce){.menu.is-open{animation:none;}}
+#appsMenu{min-width:168px;}
+#matchMenu{z-index:8000;}  /* above the drawer (7000) so it isn't hidden behind it */
+.menu.is-open{display:block;}
+.menu__item{display:flex;align-items:center;width:100%;height:36px;padding:0 12px;border:none;background:none;cursor:pointer;font:400 14px/1.3 var(--font-family);color:var(--text-primary);text-align:left;border-radius:var(--radius-xs);white-space:nowrap;}
+.menu__item:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
+
+/* apps header + cards */
+.apps-header{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.apps-apptitle{display:flex;align-items:center;gap:12px;}
+.apps-apptitle__icon{width:40px;height:40px;border-radius:var(--radius-s);background:var(--surface-success-subtle);display:flex;align-items:center;justify-content:center;color:var(--success-solid);flex-shrink:0;}
+.apps-apptitle__icon svg{width:22px;height:22px;}
+.apps-apptitle__name{font:600 20px/1.2 var(--font-family);color:var(--text-primary);}
+.waba-card{border:1px solid var(--border-subtle);border-radius:var(--radius-m);padding:20px 24px;margin-bottom:16px;background:var(--surface-default);}
+/* unassigned card: no highlight — the amber dot + "Unassigned" label + Link button convey the state */
+.waba-card__ws{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border-subtle);}
+.ws-label{font:400 13px/1.2 var(--font-family);color:var(--text-tertiary);margin-bottom:4px;}
+.ws-value{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.ws-value--unassigned{display:inline-flex;align-items:center;gap:7px;color:var(--text-warning);}
+.ws-dot{width:8px;height:8px;border-radius:50%;background:var(--warning-solid);flex-shrink:0;}
+.features__title{font:600 15px/1.3 var(--font-family);color:var(--text-primary);margin-bottom:12px;}
+.features ul{padding-left:20px;display:flex;flex-direction:column;gap:8px;}
+.features li{font:400 14px/1.5 var(--font-family);color:var(--text-secondary);}
+.sp-note{font:400 13px/1.5 var(--font-family);color:var(--text-tertiary);border-top:1px dashed var(--border-subtle);padding-top:14px;}
+
+/* context banner + workspace switcher (DS Text Dropdown) */
+.ctx-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:var(--radius-xs);background:var(--surface-info-subtle);border:1px solid var(--border-info);}
+.ctx-banner__text{display:flex;align-items:center;gap:8px;font:400 14px/1.4 var(--font-family);color:var(--text-primary);}
+.ctx-banner__text svg{width:16px;height:16px;color:var(--info-solid);flex-shrink:0;}
+.ws-switch{position:relative;}
+.ws-switch__trigger{display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font:600 15px/1.3 var(--font-family);color:var(--text-primary);padding:0;}
+.ws-switch__trigger svg{width:12px;height:12px;color:var(--icon-subtle);}
+.ws-switch__menu{position:absolute;top:28px;left:0;min-width:220px;background:var(--surface-default);border:1px solid var(--border-subtle);border-radius:var(--radius-s);box-shadow:var(--shadow-m-box);padding:4px;z-index:40;display:none;}
+.ws-sep{color:var(--text-tertiary);margin:0 8px;font-weight:400;}
+.ov-acc-name{font-weight:400;color:var(--text-secondary);}
+.ws-switch--topbar .ws-switch__trigger{gap:6px;font:500 14px/1 var(--font-family);}
+.ws-switch__label{color:var(--text-tertiary);font-weight:400;}
+.ws-switch--topbar .ws-switch__menu{left:auto;right:0;}
+.ws-switch__menu.is-open{display:block;}
+.ws-switch__item{display:flex;align-items:center;width:100%;height:36px;padding:0 12px;border:none;background:none;cursor:pointer;font:400 14px/1.3 var(--font-family);color:var(--text-primary);text-align:left;border-radius:var(--radius-xs);}
+.ws-switch__item:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
+.ws-switch__item--sel{background:var(--surface-selected);color:var(--text-brand);}
+
+/* DS Empty State */
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:440px;margin:40px auto;padding:40px;gap:16px;}
+.empty__illo{width:161px;height:auto;}
+.empty__text{display:flex;flex-direction:column;gap:6px;}
+.empty__title{font:600 16px/1.4 var(--font-family);color:var(--text-primary);}
+.empty__desc{font:400 14px/1.5 var(--font-family);color:var(--text-secondary);}
+
+/* preferences */
+.org-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:var(--radius-full);background:var(--surface-brand-subtle);border:1px solid var(--border-info);color:var(--accent-s20);font:600 11px/1.3 var(--font-family);}
+.org-tag svg{width:12px;height:12px;}
+.pref-block{display:flex;flex-direction:column;gap:6px;}
+.pref-block__title{display:flex;align-items:center;gap:10px;font:600 15px/1.3 var(--font-family);color:var(--text-primary);}
+.pref-block__desc{font:400 13.5px/1.5 var(--font-family);color:var(--text-secondary);}
+.pill{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:var(--radius-full);background:var(--tag-grey-bg);color:var(--tag-grey-fg);font:500 13px/1 var(--font-family);margin:0 6px 6px 0;}
+.pref-input{height:38px;width:320px;max-width:100%;padding:0 12px;border:1px solid var(--input-border);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text-primary);font:400 14px/1 var(--font-family);margin-top:4px;}
+.pref-input:hover{border-color:var(--border-strong);}
+.pref-input:focus{outline:none;border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
+.pref-manage{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-top:16px;background:none;border:none;padding:0;cursor:pointer;font:500 14px/1 var(--font-family);color:var(--text-link);}
+.pref-manage svg{width:16px;height:16px;}
+.pref-manage:hover{color:var(--text-link-hover);}
+/* keyword groups + DS Tag chips (zc-data-display Tag) */
+.kw-groups{display:flex;flex-direction:column;gap:14px;margin-top:12px;}
+.kw-group{display:flex;align-items:flex-start;gap:12px;}
+.kw-group__label{flex-shrink:0;width:64px;font:500 14px/24px var(--font-family);color:var(--text-secondary);}
+.kw-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.zc-tag{display:inline-flex;align-items:center;height:24px;padding:4px 8px;border-radius:var(--radius-xxs);background:var(--tag-grey-bg);color:var(--tag-grey-fg);font:500 12px/16px var(--font-family);white-space:nowrap;}
+/* slide-in drawer */
+.zc-drawer-scrim{position:fixed;inset:0;background:var(--overlay-scrim);display:flex;justify-content:flex-end;padding:16px;z-index:7000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--zc-duration-normal) var(--zc-easing-standard),visibility 0s linear var(--zc-duration-normal);}
+.zc-drawer-scrim.is-open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity var(--zc-duration-normal) var(--zc-easing-standard),visibility 0s;}
+.zc-drawer{position:relative;width:560px;max-width:calc(100vw - 32px);height:100%;background:var(--surface-default);border-radius:var(--radius-m);box-shadow:var(--shadow-l-box);display:flex;flex-direction:column;overflow:hidden;transform:translateX(calc(100% + 16px));transition:transform var(--zc-duration-normal) var(--zc-easing-standard);}
+.zc-drawer-scrim.is-open .zc-drawer{transform:translateX(0);}
+@media (prefers-reduced-motion: reduce){.zc-drawer-scrim,.zc-drawer{transition:none !important;}}
+.zc-drawer__header{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px;border-bottom:1px solid var(--border-subtle);flex-shrink:0;}
+.zc-drawer__title{font:600 16px/1.3 var(--font-family);color:var(--text-primary);}
+.zc-drawer__close{width:28px;height:28px;border:none;background:none;border-radius:var(--radius-xs);cursor:pointer;color:var(--icon-default);display:flex;align-items:center;justify-content:center;}
+.zc-drawer__close svg{width:16px;height:16px;}
+.zc-drawer__close:hover{background:var(--surface-hover);}
+/* DS tabs (node 55570:40628): 38px, 14/Medium, active = brand + 3px flared underline */
+.zc-drawer__tabs{position:relative;display:flex;gap:16px;align-items:center;padding:2px 0 0 16px;border-bottom:1px solid var(--border-subtle);flex-shrink:0;}
+.zc-drawer__tab{position:relative;height:38px;display:flex;align-items:center;padding:0 8px;border:none;background:none;cursor:pointer;font:500 14px/1 var(--font-family);color:var(--text-primary);transition:color var(--zc-duration-fast) var(--zc-easing-standard);}
+.zc-drawer__tab.is-active{color:var(--accent-master);}
+/* sliding underline indicator (positioned by JS) */
+.zc-drawer__tabind{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--accent-master);border-radius:3px 3px 0 0;transition:transform var(--zc-duration-normal) var(--zc-easing-standard),width var(--zc-duration-normal) var(--zc-easing-standard);}
+.kw-panel{transition:opacity var(--zc-duration-fast) var(--zc-easing-standard);}
+@media (prefers-reduced-motion: reduce){.zc-drawer__tab,.zc-drawer__tabind,.kw-panel{transition:none !important;}}
+.zc-drawer__body{flex:1;min-height:0;overflow-y:auto;padding:20px;}
+.zc-drawer__footer{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--border-subtle);flex-shrink:0;}
+.kw-col-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;font:500 13px/1 var(--font-family);color:var(--text-secondary);}
+.kw-col-head__kw{width:180px;flex-shrink:0;}
+.kw-col-head__arrowgap{width:16px;flex-shrink:0;}
+.kw-edit-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.kw-input{width:180px;flex-shrink:0;height:36px;padding:0 12px;border:1px solid var(--input-border);border-radius:var(--radius-xs);font:400 14px/1 var(--font-family);color:var(--text-primary);background:var(--input-bg);}
+.kw-input:focus{outline:none;border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
+.kw-arrow{display:flex;color:var(--icon-subtle);flex-shrink:0;}
+.kw-arrow svg{width:13px;height:13px;transform:rotate(-90deg);}
+.kw-match{width:210px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:36px;padding:0 10px;border:1px solid var(--input-border);border-radius:var(--radius-xs);font:400 14px/1 var(--font-family);color:var(--text-primary);background:var(--input-bg);cursor:pointer;}
+.kw-match:hover{border-color:var(--border-strong);}
+.kw-match svg{width:14px;height:14px;color:var(--input-helper);}
+.kw-del-slot{width:32px;flex-shrink:0;}
+.kw-del,.kw-add{width:32px;height:32px;border-radius:var(--radius-full);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.kw-del{border:1px solid var(--border-subtle);color:var(--icon-subtle);}
+.kw-del svg{width:15px;height:15px;}
+.kw-del:hover{border-color:var(--border-strong);color:var(--text-error);}
+.kw-add{border:1px solid var(--border-brand);color:var(--text-link);}
+.kw-add svg{width:15px;height:15px;}
+.kw-add:hover{background:var(--surface-selected);}
+.sp-toggle{width:30px;height:18px;border-radius:9px;border:none;padding:0;position:relative;background-color:var(--border-default);flex-shrink:0;transition:background-color var(--zc-duration-fast) var(--zc-easing-standard);}
+.sp-toggle.is-on{background-color:var(--surface-brand);}
+.sp-toggle__knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--surface-default);transition:transform var(--zc-duration-fast) var(--zc-easing-standard);}
+@media (prefers-reduced-motion: reduce){.sp-toggle,.sp-toggle__knob{transition:none !important;}}
+.sp-toggle.is-on .sp-toggle__knob{transform:translateX(12px);}
+.sp-toggle.is-ro{background-color:var(--surface-disabled);cursor:not-allowed;}
+.sp-toggle.is-ro.is-on{background-color:var(--icon-bg-disabled);}
+
+/* table */
+.sp-table{width:100%;border-collapse:collapse;}
+.sp-table thead th{height:40px;padding:0 16px;background:var(--table-header-bg);text-align:left;font:500 13px/1 var(--font-family);color:var(--text-secondary);white-space:nowrap;}
+.sp-table thead th:first-child{border-top-left-radius:var(--radius-s);border-bottom-left-radius:var(--radius-s);}
+.sp-table thead th:last-child{border-top-right-radius:var(--radius-s);border-bottom-right-radius:var(--radius-s);}
+.sp-th{display:inline-flex;align-items:center;gap:5px;}
+.sp-th svg{width:14px;height:14px;color:var(--icon-subtle);}
+.sp-table tbody td{height:64px;padding:0 16px;border-bottom:1px solid var(--table-divider);font:400 14px/1.4 var(--font-family);color:var(--text-primary);vertical-align:middle;}
+.sp-quality--high{color:var(--text-success);font-weight:500;}
+.sp-input-search{display:flex;align-items:center;gap:8px;width:200px;height:36px;padding:0 12px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-xs);}
+.sp-input-search:hover{border-color:var(--border-strong);}
+.sp-input-search:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
+.sp-input-search svg{width:15px;height:15px;color:var(--icon-subtle);flex-shrink:0;}
+.sp-input-search input{flex:1;border:none;outline:none;background:transparent;font:400 14px/1 var(--font-family);color:var(--text-primary);}
+.sp-input-search input::placeholder{color:var(--input-placeholder);}
+.sp-split{display:inline-flex;align-items:stretch;flex-shrink:0;}
+.sp-split .sp-btn{border-top-right-radius:0;border-bottom-right-radius:0;}
+.sp-split__drop{display:flex;align-items:center;justify-content:center;width:32px;height:36px;border:none;background-color:var(--cta-primary-bg);color:var(--cta-primary-fg);border-left:1px solid var(--cta-primary-fg);border-radius:0 var(--radius-s) var(--radius-s) 0;cursor:pointer;}
+.sp-split__drop svg{width:14px;height:14px;}
+.sp-split__drop:hover{background-color:var(--cta-primary-bg-hover);}
+/* refresh icon button */
+/* full-bleed section + full-width overview table */
+.sp-section--flush{padding-left:0;padding-right:0;}
+/* Apps table starts flush against the header stroke — no white gap above it */
+#screen-apps .sp-section--flush{padding-top:0;border-bottom:none;}
+/* Apps table column-header row is 40px (not the 44px DS default) */
+#screen-apps .ap-table thead th{height:40px;}
+.ov-table{width:100%;border-collapse:collapse;}
+.ov-table thead th{height:44px;padding:0 16px;text-align:left;font:500 13px/1 var(--font-family);color:var(--text-secondary);white-space:nowrap;background:var(--table-header-bg);border-bottom:1px solid var(--table-divider);}
+.ov-table tbody td{height:48px;padding:0 16px;font:400 14px/1.4 var(--font-family);color:var(--text-primary);border-bottom:1px solid var(--table-divider);vertical-align:middle;}
+.ov-table tbody tr:hover td{background:var(--table-row-hover);}
+.ov-table th:first-child,.ov-table td:first-child{padding-left:20px;}
+.ov-table th:last-child,.ov-table td:last-child{padding-right:20px;}
+/* Overview phone-numbers table carries a top stroke above its header row */
+#screen-overview .ov-table thead th{border-top:1px solid var(--table-divider);}
+/* Apps accounts table */
+.ap-name{display:flex;flex-direction:column;gap:2px;}
+.ap-name__t{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.ap-name__s{font:400 12.5px/1.3 var(--font-family);color:var(--text-tertiary);}
+/* status = coloured text only, no icon (DS node 2536:20) */
+.ap-status{font:500 14px/1.3 var(--font-family);}
+.ap-status--ok{color:#167c1e;}
+.ap-status--pending{color:#e56e16;}
+.ap-status--inactive{color:#cc3928;}
+/* SMS sender-id link, preferences fields + preview + page footer */
+.sms-id{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+/* whole listing row is the click target (not just a cell link) */
+.ap-table tbody tr,.sms-table tbody tr{cursor:pointer;}
+.sms-fields{display:flex;gap:16px;margin-top:4px;flex-wrap:wrap;}
+.sms-field{display:flex;flex-direction:column;gap:6px;}
+.sms-field__label{font:400 13px/1 var(--font-family);color:var(--text-secondary);}
+.sms-field .pref-input{margin-top:0;width:300px;}
+.sms-preview{margin-top:16px;max-width:560px;}
+.sms-preview__label{font:500 13px/1 var(--font-family);color:var(--text-secondary);margin-bottom:8px;}
+.sms-preview__bubble{background:var(--surface-sunken);border-radius:var(--radius-m);padding:16px;}
+.sms-preview__sk{height:8px;border-radius:var(--radius-full);background:var(--border-subtle);margin-bottom:10px;}
+.sms-preview__text{font:400 13.5px/1.5 var(--font-family);color:var(--text-primary);margin-top:16px;}
+.sms-preview__text a{color:var(--text-link);word-break:break-all;}
+.ptopbar-sep{width:1px;height:24px;background:var(--border-subtle);margin:0 4px;flex-shrink:0;}
+.sp-pagefooter{display:flex;gap:10px;align-items:center;padding:16px 20px;border-top:1px solid var(--border-subtle);flex-shrink:0;}
+.sp-btn--primary:disabled{opacity:.5;cursor:default;}
+.ap-actions-cell{text-align:right;}
+.ap-actions-btn{width:28px;height:28px;border:none;background:none;border-radius:var(--radius-xs);cursor:pointer;color:var(--icon-subtle);display:inline-flex;align-items:center;justify-content:center;opacity:0;}
+/* ••• reveals on row hover / keyboard focus only */
+.ov-table tbody tr:hover .ap-actions-btn,.ov-table tbody tr:focus-within .ap-actions-btn,.ap-actions-btn.is-pinned{opacity:1;}
+#screen-sms-gateways .sp-section--flush{padding-top:0;border-bottom:none;}
+#screen-sms-gateways .ov-table thead th{height:40px;}
+/* inline workspace dropdown in the Linked Workspace column (DS Text Dropdown + Menu) */
+.ap-ws{display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font:400 14px/1.3 var(--font-family);color:var(--text-primary);text-align:left;}
+.ap-ws svg{width:12px;height:12px;color:var(--icon-subtle);flex-shrink:0;}
+.ap-ws:hover{color:var(--text-link-hover);}
+.ap-ws--link{color:var(--text-link);font-weight:500;}
+.ap-ws--link svg{color:var(--text-link);}
+.ap-conn-by{margin-left:4px;}
+.ap-actions-btn svg{width:16px;height:16px;}
+.ap-actions-btn:hover{background:var(--surface-hover);color:var(--text-secondary);}
+.sp-btn--ghost{background:transparent;border:none;color:var(--text-link);}
+.sp-btn--ghost:hover{background:var(--surface-selected);color:var(--text-link-hover);}
+.ov-table .sp-btn--ghost{height:32px;padding:0 10px;margin-left:-10px;}
+/* Pagination — product wrapper (.pagination-wrapper 59px, padding 12px 25px) + DS segmented pill */
+.ap-pagination{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding:12px 25px;border-top:1px solid var(--border-subtle);}
+.ap-pagination__total{display:flex;align-items:center;gap:4px;}
+.ap-pg-total__label{font:400 14px/21px var(--font-family);color:var(--text-primary);}
+.ap-pg-total__val{font:500 13px/19.5px var(--font-family);color:var(--text-primary);}
+.ap-pg-view{background:none;border:none;padding:0;cursor:pointer;font:400 14px/21px var(--font-family);color:var(--text-link);}
+.ap-pg-view:hover{color:var(--text-link-hover);text-decoration:underline;}
+.ap-pg-controls{display:flex;align-items:center;}
+.ap-pg-cell{display:flex;align-items:center;gap:4px;height:34px;box-sizing:border-box;border:1px solid var(--border-subtle);background:var(--surface-default);font:500 13px/19.5px var(--font-family);color:var(--text-primary);}
+.ap-pg-cell--perpage{padding:0 8px 0 4px;border-right:none;border-radius:var(--radius-xs) 0 0 var(--radius-xs);cursor:pointer;}
+.ap-pg-cell--range{padding:0 4px;border-radius:0 var(--radius-xs) var(--radius-xs) 0;}
+.ap-pg-cell__caret{width:16px;height:16px;color:var(--input-helper);flex-shrink:0;}
+.ap-pg-arrow{width:16px;height:16px;border:none;background:none;padding:0;display:flex;align-items:center;justify-content:center;color:var(--input-helper);cursor:pointer;}
+.ap-pg-arrow svg{width:16px;height:16px;}
+.ap-pg-arrow:hover:not(:disabled){color:var(--icon-default);}
+.ap-pg-arrow:disabled{color:var(--text-disabled);cursor:default;}
+.ap-pg-arrow--prev svg{transform:rotate(90deg);}
+.ap-pg-arrow--next svg{transform:rotate(-90deg);}
+
+/* ===== DS MODAL (top-anchored, left-aligned, CTAs left) ===== */
+.zc-scrim{position:fixed;inset:0;z-index:5000;background:var(--overlay-scrim);display:none;align-items:flex-start;justify-content:center;padding-top:20px;}
+.zc-scrim.is-open{display:flex;}
+.zc-modal{width:500px;max-width:94vw;max-height:calc(100vh - 40px);background:var(--surface-default);border-radius:var(--radius-s);box-shadow:var(--shadow-l-box);display:flex;flex-direction:column;overflow:hidden;}
+.zc-modal__header{height:64px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 20px 16px 24px;border-bottom:1px solid var(--border-subtle);}
+.zc-modal__title{font:500 18px/24px var(--font-family);color:var(--text-primary);}
+.zc-modal__close{width:28px;height:28px;flex-shrink:0;border:none;background:none;cursor:pointer;color:var(--icon-default);display:flex;align-items:center;justify-content:center;border-radius:var(--radius-xs);}
+.zc-modal__close svg{width:16px;height:16px;}
+.zc-modal__close:hover{background:var(--surface-hover);}
+.zc-modal__body{flex:1;min-height:0;padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
+.zc-modal__body p{font:400 14px/1.5 var(--font-family);color:var(--text-secondary);}
+.zc-modal__footer{height:72px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-start;gap:10px;padding:16px 24px 20px;border-top:1px solid var(--border-subtle);}
+/* field inside modal */
+.zc-field__label{font:500 14px/1.4 var(--font-family);color:var(--text-primary);display:block;margin-bottom:6px;}
+.zc-select{position:relative;}
+.zc-select select{width:100%;height:36px;padding:8px 32px 8px 10px;border:1px solid var(--input-border);border-radius:var(--radius-xs);background:var(--input-bg);font:400 13px/1 var(--font-family);color:var(--text-primary);appearance:none;cursor:pointer;}
+.zc-select select:focus{outline:none;border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
+.zc-select select:required:invalid{color:var(--input-placeholder);}
+.zc-select__chev{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--input-helper);pointer-events:none;}
+.zc-helper{font:400 13px/1.4 var(--font-family);color:var(--text-secondary);margin-top:6px;}
+/* DS Select (trigger + menu) — zc-select-system */
+.zc-dsel{position:relative;}
+.zc-dsel__trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:36px;padding:8px 10px;border:1px solid var(--input-border);border-radius:var(--radius-xs);background:var(--input-bg);cursor:pointer;font:400 13px/1 var(--font-family);color:var(--text-primary);text-align:left;}
+.zc-dsel__trigger.is-placeholder{color:var(--text-placeholder);}
+.zc-dsel__trigger:hover{border-color:var(--border-strong);}
+.zc-dsel__trigger.is-open{border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
+.zc-dsel__caret{width:14px;height:14px;color:var(--input-helper);flex-shrink:0;}
+.zc-dsel__menu{position:fixed;background:var(--surface-default);border:1px solid var(--border-subtle);border-radius:var(--radius-s);box-shadow:var(--shadow-m-box);padding:4px;z-index:6000;display:none;max-height:216px;overflow-y:auto;}
+.zc-dsel__menu.is-open{display:block;}
+.zc-dsel__item{display:flex;align-items:center;width:100%;height:36px;padding:0 12px;border:none;background:none;cursor:pointer;font:400 14px/1.3 var(--font-family);color:var(--text-primary);text-align:left;border-radius:var(--radius-xs);}
+.zc-dsel__item:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
+.zc-dsel__item.is-sel{background:var(--surface-selected);color:var(--text-brand);}
+/* info row (account summary inside a modal) */
+.wa-strip{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border-subtle);border-radius:var(--radius-xs);background:var(--surface-sunken);}
+.wa-strip--warn{border-color:var(--border-warning);background:var(--surface-warning-subtle);}
+.wa-strip--err{border-color:var(--border-error);background:var(--surface-error-subtle);}
+.wa-strip__icon{width:32px;height:32px;border-radius:var(--radius-xs);background:var(--surface-success-subtle);display:flex;align-items:center;justify-content:center;color:var(--success-solid);flex-shrink:0;}
+.wa-strip__icon svg{width:18px;height:18px;}
+.wa-strip__name{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.wa-strip__meta{font:400 12.5px/1.3 var(--font-family);color:var(--text-tertiary);margin-top:1px;}
+/* impact groups + choices (left-aligned) */
+.impact-group{border:1px solid var(--border-subtle);border-radius:var(--radius-xs);overflow:hidden;}
+.impact-group__head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--surface-sunken);border-bottom:1px solid var(--border-subtle);}
+.impact-group__ws{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.impact-group__count{font:400 12.5px/1.3 var(--font-family);color:var(--text-tertiary);}
+.impact-list{list-style:none;padding:8px 14px;display:flex;flex-direction:column;gap:6px;}
+.impact-list li{display:flex;align-items:center;gap:8px;font:400 14px/1.4 var(--font-family);color:var(--text-secondary);}
+.impact-list li .impact-count{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.choice{display:block;border:1px solid var(--border-subtle);border-radius:var(--radius-xs);padding:14px;cursor:pointer;transition:border-color var(--zc-duration-fast),background-color var(--zc-duration-fast);}
+.choice + .choice{margin-top:10px;}
+.choice:hover{border-color:var(--border-strong);}
+.choice.is-selected{border-color:var(--border-selected);background-color:var(--surface-brand-subtle);}
+.choice__row{display:flex;align-items:flex-start;gap:10px;}
+.choice__radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border-default);flex-shrink:0;margin-top:1px;position:relative;}
+.choice.is-selected .choice__radio{border-color:var(--border-selected);}
+.choice.is-selected .choice__radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--surface-brand);}
+.choice__title{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.choice__desc{font:400 14px/1.4 var(--font-family);color:var(--text-secondary);margin-top:3px;}
+.modal-note{font:400 12.5px/1.4 var(--font-family);color:var(--text-tertiary);}
+
+/* toasts */
+.zc-toast-container{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.zc-toast{display:flex;align-items:center;gap:16px;width:360px;max-width:calc(100vw - 40px);min-height:56px;padding:12px 14px;border-radius:var(--radius-s);background:var(--surface-success-subtle);border:2px solid var(--surface-default);box-shadow:var(--shadow-m-box);animation:toast-in var(--zc-duration-normal) var(--zc-easing-standard);}
+.zc-toast--info{background:var(--surface-info-subtle);}
+.zc-toast__icon{flex-shrink:0;width:32px;height:32px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;}
+.zc-toast--success .zc-toast__icon{background-color:var(--icon-success);}
+.zc-toast--info .zc-toast__icon{background-color:var(--icon-info);}
+.zc-toast__icon svg{width:16px;height:16px;color:var(--text-on-solid);}
+.zc-toast__msg{flex:1;min-width:0;font:500 14px/20px var(--font-family);color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.zc-toast__close{flex-shrink:0;width:24px;height:24px;border:none;background:none;cursor:pointer;color:var(--icon-default);display:flex;align-items:center;justify-content:center;border-radius:var(--radius-xxs);}
+.zc-toast__close svg{width:16px;height:16px;}
+@keyframes toast-in{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="zc-logo" viewBox="0 0 24 23" fill="currentColor"><path d="M23.968 15.074L21.6257 1.75587C21.4767 0.891817 20.8229 0.218851 19.9704 0.044378C19.1262 -0.130095 18.282 0.218851 17.802 0.933358C18.0254 0.634262 18.4393 0.55118 18.7538 0.758885C19.0766 0.974899 19.1676 1.40693 18.9607 1.73926L18.9524 1.74756C18.9524 1.74756 18.9524 1.73926 18.9607 1.73926C19.2007 1.36539 19.5814 1.40693 19.689 1.43185C19.7966 1.45678 20.1608 1.56478 20.2435 2.00512L22.5775 15.3232C22.6272 15.6057 22.503 15.8051 22.4203 15.9048C22.3375 16.0045 22.1637 16.154 21.8823 16.154H8.27577C7.88678 16.154 7.57227 16.4697 7.57227 16.8602C7.57227 17.2507 7.88678 17.5664 8.27577 17.5664H10.0883L8.80547 21.1223C8.70615 21.4048 8.4413 21.5876 8.14335 21.5876H7.57227C7.23294 21.5876 6.94326 21.3384 6.87705 21.006L4.41894 7.07313L15.3439 1.89711C15.6915 1.73095 15.8487 1.30723 15.6832 0.958283C15.5177 0.609337 15.0956 0.451481 14.748 0.617645L1.20767 7.03159C0.34692 7.4387 -0.133115 8.37753 0.0324139 9.31635L1.17457 15.8134C1.34837 16.827 2.22568 17.5664 3.25196 17.5664H4.84104L5.49488 21.247C5.67696 22.2606 6.54599 23 7.57227 23H8.14335C9.02893 23 9.83175 22.435 10.1297 21.6042L11.5864 17.5664H21.8906C22.5196 17.5664 23.1072 17.2922 23.5045 16.8104C23.91 16.3285 24.0755 15.6971 23.968 15.074ZM3.25196 16.154C2.91262 16.154 2.61467 15.9048 2.55674 15.5724L1.41458 9.07542C1.35665 8.7597 1.52218 8.4523 1.81185 8.31106L3.10298 7.70456L4.59275 16.154H3.25196Z" fill="#E42527"/><path d="M18.7455 0.758872C18.431 0.551166 18.0172 0.634249 17.7937 0.933345C17.7854 0.941653 17.7772 0.949961 17.7689 0.966578L12.2237 9.50743C12.025 9.80653 11.636 9.91454 11.3215 9.74837L8.07715 8.11165C7.72953 7.93718 7.30743 8.07842 7.13363 8.42736C6.95982 8.77631 7.10052 9.20003 7.44813 9.3745L10.6925 11.0112C10.9987 11.1608 11.3215 11.2355 11.6443 11.2355C12.3395 11.2355 13.0099 10.8949 13.4155 10.2718L18.9607 1.73924L18.969 1.73093C19.1676 1.40691 19.0766 0.974886 18.7455 0.758872Z" fill="#226DB4"/></symbol>
+<symbol id="zc-search" viewBox="0 0 16 16" fill="none"><path d="M14.89 14.64L11.2 10.94M12.47 6.73C12.47 9.9 9.9 12.47 6.73 12.47C3.57 12.47 1 9.9 1 6.73C1 3.57 3.57 1 6.73 1C9.9 1 12.47 3.57 12.47 6.73Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/></symbol>
+<symbol id="zc-plus" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.24C8.46 1.24 8.83 1.61 8.83 2.07V7.17H13.93C14.39 7.17 14.76 7.54 14.76 8C14.76 8.46 14.39 8.83 13.93 8.83H8.83V13.93C8.83 14.39 8.46 14.76 8 14.76C7.54 14.76 7.17 14.39 7.17 13.93V8.83H2.07C1.61 8.83 1.24 8.46 1.24 8C1.24 7.54 1.61 7.17 2.07 7.17H7.17V2.07C7.17 1.61 7.54 1.24 8 1.24Z" fill="currentColor"/></symbol>
+<symbol id="zc-bell" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.5C10.93 0.5 13.26 2.96 13.26 5.94V6.42C13.26 6.89 13.4 7.34 13.64 7.72L14.4 8.91C15.31 10.33 14.64 12.28 13.01 12.74C12.56 12.87 12.11 12.97 11.66 13.06C11.11 14.5 9.67 15.5 8 15.5C6.33 15.5 4.89 14.5 4.33 13.06C3.89 12.97 3.44 12.87 2.99 12.74C1.36 12.28 0.69 10.33 1.6 8.91L2.36 7.72C2.6 7.34 2.74 6.89 2.74 6.42V5.94C2.74 2.96 5.07 0.5 8 0.5ZM10.09 13.31C8.7 13.47 7.3 13.47 5.91 13.31C6.39 13.88 7.14 14.26 8 14.26C8.86 14.26 9.61 13.88 10.09 13.31ZM8 1.74C5.8 1.74 3.98 3.6 3.98 5.94V6.42C3.98 7.12 3.78 7.81 3.4 8.39L2.64 9.58C2.16 10.33 2.54 11.32 3.33 11.55C6.39 12.41 9.61 12.41 12.67 11.55C13.46 11.32 13.84 10.33 13.36 9.58L12.6 8.39C12.22 7.81 12.02 7.12 12.02 6.42V5.94C12.02 3.6 10.2 1.74 8 1.74Z" fill="currentColor"/></symbol>
+<symbol id="zc-settings" viewBox="0 0 18 17" fill="currentColor"><path d="M11.59 0C11.78 -0.01 11.95 0.05 12.06 0.1C12.19 0.16 12.34 0.25 12.48 0.33L13.89 1.14C14.04 1.23 14.19 1.31 14.3 1.39C14.42 1.48 14.58 1.61 14.67 1.83C14.77 2.06 14.74 2.3 14.71 2.44C14.69 2.6 14.64 2.79 14.58 3C14.25 4.29 15.06 5.67 16.34 6.02C16.55 6.08 16.74 6.13 16.89 6.18C17.02 6.23 17.24 6.32 17.39 6.53C17.53 6.71 17.57 6.91 17.58 7.06C17.6 7.2 17.6 7.37 17.6 7.54V9.15C17.6 9.32 17.6 9.49 17.58 9.63C17.57 9.77 17.53 9.98 17.39 10.16C17.24 10.36 17.02 10.46 16.89 10.5C16.74 10.56 16.55 10.61 16.34 10.67L16.34 10.67C15.06 11.02 14.25 12.39 14.58 13.68C14.64 13.89 14.69 14.09 14.71 14.25C14.74 14.39 14.77 14.62 14.67 14.86C14.58 15.07 14.42 15.21 14.3 15.29C14.19 15.38 14.04 15.46 13.9 15.55L12.48 16.36C12.34 16.44 12.19 16.53 12.07 16.58C11.93 16.64 11.74 16.71 11.51 16.68C11.25 16.65 11.07 16.5 10.96 16.41C10.84 16.31 10.71 16.17 10.56 16.02L10.37 15.85C9.4 15.05 7.94 15.11 7.04 16.02H7.04C6.89 16.17 6.76 16.31 6.64 16.41C6.53 16.5 6.34 16.64 6.09 16.68C5.86 16.71 5.67 16.64 5.53 16.58C5.4 16.53 5.26 16.44 5.12 16.36L3.7 15.55C3.56 15.46 3.41 15.38 3.29 15.29C3.18 15.21 3.02 15.07 2.93 14.86C2.83 14.62 2.86 14.39 2.89 14.25C2.91 14.09 2.96 13.89 3.02 13.68C3.35 12.39 2.54 11.02 1.25 10.67C1.05 10.61 0.86 10.56 0.71 10.5C0.58 10.46 0.36 10.36 0.21 10.16C0.06 9.98 0.03 9.77 0.01 9.63C0 9.49 4.95e-06 9.32 5.3e-06 9.15V7.54C4.87e-06 7.37 0 7.2 0.01 7.06C0.03 6.91 0.07 6.71 0.21 6.53L0.27 6.45C0.41 6.3 0.59 6.23 0.71 6.18C0.86 6.13 1.05 6.08 1.25 6.02C2.54 5.67 3.35 4.29 3.02 3C2.96 2.79 2.91 2.6 2.89 2.44C2.86 2.3 2.83 2.06 2.93 1.83L2.97 1.75C3.06 1.58 3.19 1.47 3.3 1.39C3.41 1.31 3.56 1.23 3.7 1.14L5.12 0.33C5.26 0.25 5.41 0.16 5.53 0.1C5.67 0.04 5.86 -0.02 6.09 0.01C6.34 0.04 6.53 0.19 6.64 0.28C6.76 0.38 6.89 0.52 7.04 0.67C8 1.64 9.6 1.64 10.56 0.67C10.71 0.52 10.84 0.38 10.96 0.28C11.07 0.19 11.25 0.04 11.5 0.01L11.59 0ZM11.61 1.31L11.41 1.51C9.98 2.96 7.62 2.96 6.19 1.51C6.07 1.39 5.98 1.31 5.92 1.25C5.92 1.25 5.91 1.26 5.91 1.26C5.86 1.29 5.79 1.32 5.72 1.37L4.3 2.18C4.22 2.23 4.16 2.26 4.11 2.3C4.1 2.3 4.09 2.31 4.08 2.31C4.1 2.4 4.13 2.53 4.18 2.71C4.68 4.64 3.48 6.66 1.57 7.18C1.4 7.23 1.29 7.26 1.2 7.28C1.2 7.29 1.2 7.3 1.2 7.31C1.2 7.38 1.2 7.45 1.2 7.54V9.15C1.2 9.24 1.2 9.31 1.2 9.37C1.2 9.38 1.2 9.39 1.2 9.4C1.29 9.43 1.4 9.46 1.57 9.51C3.48 10.03 4.67 12.05 4.18 13.98C4.13 14.16 4.1 14.29 4.08 14.38C4.09 14.38 4.1 14.39 4.11 14.39C4.16 14.42 4.22 14.46 4.3 14.51L5.72 15.32C5.79 15.36 5.86 15.4 5.91 15.43C5.91 15.43 5.92 15.43 5.92 15.44C5.98 15.38 6.07 15.29 6.18 15.18C7.57 13.77 9.83 13.73 11.28 15.04L11.41 15.18L11.61 15.37C11.64 15.4 11.66 15.42 11.68 15.44C11.68 15.43 11.69 15.43 11.69 15.43C11.74 15.4 11.81 15.36 11.88 15.32L13.3 14.51L13.49 14.39C13.5 14.39 13.51 14.38 13.51 14.38C13.5 14.29 13.47 14.16 13.42 13.98C12.92 12.05 14.12 10.03 16.03 9.51C16.2 9.46 16.31 9.43 16.39 9.4C16.39 9.39 16.4 9.38 16.4 9.37C16.4 9.31 16.4 9.24 16.4 9.15V7.54C16.4 7.45 16.4 7.38 16.4 7.31C16.4 7.3 16.39 7.29 16.39 7.28C16.31 7.26 16.2 7.23 16.03 7.18C14.12 6.66 12.92 4.64 13.42 2.71C13.46 2.53 13.49 2.4 13.51 2.31C13.51 2.31 13.5 2.3 13.49 2.3C13.44 2.26 13.37 2.23 13.3 2.18L11.88 1.37H11.88C11.8 1.32 11.74 1.29 11.69 1.26C11.69 1.26 11.68 1.25 11.68 1.25C11.66 1.27 11.63 1.29 11.61 1.31ZM8.81 5.19C10.65 5.19 12.15 6.69 12.15 8.53C12.15 10.37 10.65 11.86 8.81 11.86C6.97 11.86 5.48 10.37 5.48 8.53C5.48 6.69 6.97 5.19 8.81 5.19ZM8.81 6.39C7.64 6.39 6.68 7.35 6.68 8.53C6.68 9.7 7.64 10.66 8.81 10.66C9.99 10.66 10.95 9.7 10.95 8.53C10.95 7.35 9.99 6.39 8.81 6.39Z"/></symbol>
+<symbol id="zc-caret" viewBox="0 0 16 16" fill="currentColor"><path d="M12.8 5.18C13.07 5.45 13.07 5.87 12.8 6.14L8.48 10.46C8.21 10.73 7.78 10.73 7.52 10.46L3.2 6.14C2.93 5.87 2.93 5.45 3.2 5.18C3.46 4.91 3.89 4.91 4.16 5.18L7.83 8.85L8.17 8.85L11.84 5.18C12.11 4.91 12.53 4.91 12.8 5.18Z" fill="currentColor"/></symbol>
+<symbol id="zc-library" viewBox="0 0 16 16" fill="currentColor"><path d="M6.31 1.33C6.98 1.33 7.6 1.65 8 2.18L8.57 2.93C8.71 3.12 8.93 3.23 9.16 3.23H10.92C12.15 3.23 13.15 3.55 13.81 4.33C14.45 5.08 14.67 6.14 14.67 7.33V7.34L14.65 10.44C14.65 11.69 14.28 12.76 13.51 13.53C12.75 14.3 11.67 14.67 10.42 14.67H5.57C4.32 14.67 3.24 14.3 2.47 13.53C1.7 12.76 1.33 11.68 1.33 10.43V5.56C1.33 4.39 1.55 3.31 2.17 2.53C2.82 1.71 3.81 1.33 5.07 1.33H6.31ZM5.07 2.7C4.09 2.7 3.56 2.98 3.24 3.38C2.9 3.81 2.7 4.51 2.7 5.56V10.43C2.7 11.42 2.99 12.11 3.44 12.56C3.89 13.01 4.59 13.3 5.57 13.3H10.42C11.4 13.3 12.1 13.01 12.55 12.56C13 12.11 13.28 11.42 13.28 10.43V10.43L13.3 7.33L13.29 6.95C13.25 6.09 13.06 5.55 12.77 5.21C12.46 4.85 11.93 4.6 10.92 4.6H9.16C8.49 4.6 7.87 4.29 7.47 3.76L6.9 3L6.9 3C6.76 2.81 6.55 2.7 6.31 2.7H5.07ZM10.72 8.96C11.1 8.96 11.41 9.26 11.41 9.64C11.41 10.02 11.1 10.32 10.72 10.32H5.28C4.9 10.32 4.59 10.02 4.59 9.64C4.59 9.26 4.9 8.96 5.28 8.96H10.72Z" fill="currentColor"/></symbol>
+<symbol id="zc-close" viewBox="0 0 16 16" fill="currentColor"><path d="M14.95 0.18C15.19 -0.06 15.58 -0.06 15.82 0.18C16.06 0.42 16.06 0.81 15.82 1.05L8.87 8L15.82 14.95C16.06 15.19 16.06 15.58 15.82 15.82C15.58 16.06 15.19 16.06 14.95 15.82L8 8.87L1.05 15.82C0.81 16.06 0.42 16.06 0.18 15.82C-0.06 15.58 -0.06 15.19 0.18 14.95L7.13 8L0.18 1.05C-0.06 0.81 -0.06 0.42 0.18 0.18C0.42 -0.06 0.81 -0.06 1.05 0.18L8 7.13L14.95 0.18Z" fill="currentColor"/></symbol>
+<symbol id="zc-more" viewBox="0 0 16 16" fill="currentColor"><path d="M2.61 6.56C3.48 6.56 4.19 7.26 4.19 8.14C4.19 9.01 3.48 9.71 2.61 9.71C1.74 9.71 1.03 9.01 1.03 8.14C1.03 7.26 1.74 6.56 2.61 6.56ZM8.02 6.56C8.89 6.56 9.6 7.26 9.6 8.14C9.6 9.01 8.89 9.71 8.02 9.71C7.15 9.71 6.44 9.01 6.44 8.14C6.44 7.26 7.15 6.56 8.02 6.56ZM13.42 6.56C14.29 6.56 15 7.26 15 8.14C15 9.01 14.29 9.71 13.42 9.71C12.55 9.71 11.84 9.01 11.84 8.14C11.84 7.26 12.55 6.56 13.42 6.56Z" fill="currentColor"/></symbol>
+<symbol id="zc-clear" viewBox="0 0 16 16" fill="currentColor"><path d="M11.47 3.47C11.76 3.18 12.24 3.18 12.53 3.47C12.82 3.76 12.82 4.24 12.53 4.53L9.06 8L12.53 11.47C12.82 11.76 12.82 12.24 12.53 12.53C12.24 12.82 11.76 12.82 11.47 12.53L8 9.06L4.53 12.53C4.24 12.82 3.76 12.82 3.47 12.53C3.18 12.24 3.18 11.76 3.47 11.47L6.94 8L3.47 4.53C3.18 4.24 3.18 3.76 3.47 3.47C3.76 3.18 4.24 3.18 4.53 3.47L8 6.94L11.47 3.47Z" fill="currentColor"/></symbol>
+<symbol id="zc-arrow-back" viewBox="0 0 16 16" fill="currentColor"><path d="M5.8 3.9C6 3.7 6.3 3.7 6.5 3.9C6.8 4.1 6.8 4.5 6.5 4.7L3.8 7.4H9.9C10.6 7.4 11.6 7.7 12.5 8.3C13.4 8.9 14.1 10 14.1 11.7C14.1 12 13.9 12.3 13.6 12.3C13.2 12.3 13 12 13 11.7C13 10.4 12.5 9.6 11.8 9.2C11.2 8.7 10.4 8.6 9.9 8.6H3.8L6.5 11.3C6.8 11.5 6.8 11.9 6.5 12.1C6.3 12.3 6 12.3 5.8 12.1L2.1 8.4C1.9 8.3 1.9 8.1 1.9 8C1.9 7.9 1.9 7.7 2.1 7.6L5.8 3.9Z"/></symbol>
+<symbol id="zc-users-and-controls" viewBox="0 0 17 17" fill="none"><path d="M12.57 14.11C12.45 11.94 11.79 10.36 8.09 10.36C4.39 10.36 3.73 11.94 3.61 14.11M10.34 5.83C10.34 7.07 9.33 8.08 8.09 8.08C6.85 8.08 5.84 7.07 5.84 5.83C5.84 4.59 6.85 3.58 8.09 3.58C9.33 3.58 10.34 4.59 10.34 5.83ZM15.6 8.1C15.6 12.24 12.24 15.6 8.1 15.6C3.96 15.6 0.6 12.24 0.6 8.1C0.6 3.96 3.96 0.6 8.1 0.6C12.24 0.6 15.6 3.96 15.6 8.1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></symbol>
+<symbol id="zc-contacts-and-customization" viewBox="0 0 16 16" fill="currentColor"><path d="M6.27 8.01C7.76 8.01 9.13 8.34 10.16 8.92C11.16 9.48 11.95 10.35 11.95 11.45C11.95 12.19 11.98 13.22 11.1 13.94C10.68 14.28 10.09 14.52 9.33 14.67C8.56 14.83 7.56 14.91 6.27 14.91C4.99 14.91 3.99 14.83 3.22 14.67C2.45 14.52 1.87 14.28 1.45 13.94C0.57 13.22 0.6 12.19 0.6 11.45C0.6 10.35 1.39 9.48 2.39 8.92C3.42 8.34 4.79 8.01 6.27 8.01ZM6.27 9.21C4.96 9.21 3.79 9.51 2.98 9.96C2.15 10.43 1.8 10.98 1.8 11.45C1.8 12.29 1.83 12.7 2.21 13.01C2.43 13.18 2.8 13.36 3.46 13.5C4.12 13.63 5.03 13.71 6.27 13.71C7.52 13.71 8.43 13.63 9.09 13.5C9.75 13.36 10.12 13.18 10.34 13.01C10.72 12.7 10.75 12.29 10.75 11.45C10.75 10.98 10.4 10.43 9.57 9.97C8.76 9.51 7.59 9.21 6.27 9.21ZM12.84 8.17C13.56 8.38 14.19 8.7 14.66 9.13C15.13 9.56 15.46 10.12 15.46 10.78C15.46 11.19 15.47 11.73 15.25 12.22C15 12.76 14.52 13.12 13.79 13.36C13.47 13.46 13.13 13.28 13.03 12.97C12.93 12.65 13.11 12.32 13.42 12.22C13.95 12.05 14.1 11.86 14.16 11.71C14.25 11.52 14.27 11.26 14.27 10.78C14.26 10.55 14.15 10.29 13.85 10.02C13.55 9.74 13.09 9.49 12.5 9.32C12.18 9.23 12 8.89 12.1 8.58C12.19 8.26 12.52 8.08 12.84 8.17ZM6.28 1.03C8.01 1.03 9.42 2.43 9.42 4.16C9.42 5.9 8.01 7.3 6.28 7.3C4.55 7.3 3.14 5.9 3.14 4.16C3.14 2.43 4.55 1.03 6.28 1.03ZM10.19 2.78C10.32 2.47 10.67 2.33 10.97 2.45C11.94 2.85 12.63 3.78 12.63 4.9C12.63 5.89 12.1 6.74 11.29 7.2C11.01 7.36 10.64 7.26 10.48 6.97C10.31 6.68 10.41 6.32 10.7 6.15C11.15 5.9 11.43 5.44 11.43 4.9C11.43 4.3 11.06 3.78 10.52 3.56C10.21 3.44 10.07 3.09 10.19 2.78ZM6.28 2.22C5.21 2.22 4.34 3.1 4.34 4.16C4.34 5.23 5.21 6.1 6.28 6.1C7.35 6.1 8.22 5.23 8.22 4.16C8.22 3.1 7.35 2.23 6.28 2.22Z"/></symbol>
+<symbol id="zc-settings-email" viewBox="0 0 16 16" fill="currentColor"><path d="M5.98 1.55C7.33 1.51 8.67 1.51 10.02 1.55C11.09 1.57 11.96 1.59 12.66 1.71C13.38 1.84 13.98 2.08 14.48 2.59V2.59C14.98 3.09 15.23 3.68 15.35 4.39C15.47 5.08 15.48 5.92 15.51 6.97L15.52 8C15.52 8.34 15.51 8.69 15.51 9.03C15.48 10.08 15.47 10.92 15.35 11.61C15.23 12.32 14.98 12.91 14.48 13.41C13.98 13.92 13.38 14.16 12.66 14.28C11.96 14.41 11.09 14.43 10.02 14.45C8.67 14.49 7.33 14.49 5.98 14.45C4.91 14.43 4.04 14.41 3.34 14.28C2.62 14.16 2.02 13.92 1.52 13.41C1.02 12.91 0.78 12.32 0.65 11.61C0.53 10.92 0.52 10.07 0.5 9.03C0.48 8.34 0.48 7.66 0.5 6.97C0.52 5.92 0.53 5.08 0.65 4.39C0.78 3.68 1.02 3.09 1.52 2.59C2.02 2.08 2.62 1.84 3.34 1.71C4.04 1.59 4.91 1.57 5.98 1.55ZM10.43 7.08C9.54 7.59 8.79 7.91 8 7.91C7.21 7.91 6.47 7.59 5.57 7.08L1.79 4.94C1.73 5.46 1.71 6.12 1.69 6.99C1.68 7.66 1.68 8.33 1.69 9.01C1.72 10.09 1.74 10.83 1.84 11.4C1.93 11.95 2.09 12.28 2.37 12.56C2.65 12.84 2.99 13.01 3.55 13.1C4.14 13.21 4.9 13.23 6.01 13.25C7.34 13.29 8.66 13.29 9.99 13.25C11.1 13.23 11.86 13.21 12.45 13.1C13.01 13.01 13.35 12.84 13.63 12.56C13.91 12.28 14.07 11.95 14.17 11.4C14.27 10.83 14.28 10.09 14.31 9.01L14.32 8C14.32 7.66 14.31 7.33 14.31 6.99C14.29 6.11 14.27 5.46 14.21 4.94L10.43 7.08ZM9.99 2.75C8.66 2.71 7.34 2.71 6.01 2.75C4.9 2.77 4.14 2.79 3.55 2.9C2.99 2.99 2.65 3.16 2.37 3.44C2.27 3.53 2.19 3.64 2.12 3.75L6.16 6.04C7.03 6.53 7.54 6.71 8 6.71C8.46 6.71 8.97 6.53 9.84 6.04L13.88 3.75C13.81 3.64 13.73 3.53 13.63 3.44C13.35 3.16 13.01 2.99 12.45 2.9C11.86 2.79 11.1 2.77 9.99 2.75Z"/></symbol>
+<symbol id="zc-settings-whatsapp" viewBox="0 0 16 16" fill="currentColor"><path d="M13.31 2.68C12.62 1.99 11.8 1.44 10.89 1.06C9.99 0.69 9.01 0.5 8.03 0.5C3.91 0.5 0.56 3.84 0.56 7.93C0.56 9.25 0.91 10.52 1.56 11.65L0.5 15.5L4.46 14.47C5.55 15.06 6.78 15.37 8.03 15.37C12.15 15.37 15.5 12.04 15.5 7.94C15.5 5.95 14.72 4.09 13.31 2.68ZM8.03 14.11C6.91 14.11 5.82 13.81 4.86 13.25L4.64 13.12L2.29 13.73L2.91 11.45L2.76 11.22C2.14 10.23 1.81 9.09 1.81 7.93C1.81 4.53 4.6 1.75 8.02 1.75C9.68 1.75 11.24 2.4 12.41 3.57C12.99 4.14 13.45 4.82 13.76 5.57C14.07 6.32 14.23 7.13 14.23 7.94C14.24 11.35 11.45 14.11 8.03 14.11ZM11.44 9.49C11.25 9.4 10.33 8.95 10.16 8.89C9.99 8.83 9.87 8.8 9.74 8.98C9.61 9.16 9.26 9.58 9.15 9.7C9.05 9.83 8.93 9.85 8.75 9.75C8.56 9.66 7.95 9.46 7.25 8.83C6.69 8.33 6.32 7.72 6.21 7.54C6.1 7.35 6.19 7.25 6.29 7.15C6.37 7.07 6.48 6.94 6.57 6.83C6.66 6.73 6.7 6.64 6.76 6.52C6.82 6.4 6.79 6.29 6.74 6.2C6.7 6.11 6.32 5.2 6.17 4.82C6.02 4.46 5.86 4.51 5.75 4.5H5.38C5.26 4.5 5.06 4.54 4.89 4.73C4.72 4.92 4.24 5.37 4.24 6.28C4.24 7.2 4.91 8.08 5 8.2C5.09 8.33 6.32 10.21 8.19 11.01C8.63 11.2 8.98 11.32 9.25 11.4C9.7 11.54 10.1 11.52 10.43 11.47C10.79 11.42 11.54 11.02 11.69 10.59C11.84 10.15 11.84 9.79 11.79 9.7C11.74 9.62 11.63 9.58 11.44 9.49Z"/></symbol>
+<symbol id="zc-settings-sms" viewBox="0 0 16 16" fill="none"><path d="M3.14 13.66L4.3 12.74L4.31 12.73C4.55 12.54 4.67 12.44 4.81 12.37C4.93 12.31 5.06 12.26 5.19 12.24C5.34 12.21 5.5 12.21 5.82 12.21H12.41C13.25 12.21 13.68 12.21 14 12.04C14.29 11.89 14.52 11.66 14.67 11.38C14.83 11.05 14.83 10.63 14.83 9.78V4.01C14.83 3.16 14.83 2.73 14.67 2.41C14.52 2.12 14.29 1.89 14 1.74C13.68 1.58 13.25 1.58 12.4 1.58H3.6C2.75 1.58 2.32 1.58 2 1.74C1.71 1.89 1.48 2.12 1.33 2.41C1.17 2.73 1.17 3.16 1.17 4.01V12.72C1.17 13.52 1.17 13.93 1.33 14.14C1.48 14.32 1.7 14.42 1.93 14.42C2.19 14.42 2.51 14.17 3.14 13.66Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="zc-consent-and-privacy" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.49C8.26 0.49 8.52 0.57 8.77 0.67C9.03 0.77 9.35 0.92 9.74 1.1C10.31 1.36 11.02 1.64 11.83 1.88C12.43 2.05 12.93 2.2 13.3 2.34C13.67 2.49 14.02 2.68 14.26 3C14.49 3.31 14.57 3.67 14.61 4.05C14.65 4.41 14.65 4.88 14.65 5.43V7.44C14.65 9.57 13.71 11.26 12.58 12.52C11.45 13.77 10.11 14.63 9.23 15.11C8.84 15.32 8.51 15.51 8 15.51C7.49 15.51 7.16 15.32 6.77 15.11C5.89 14.63 4.55 13.77 3.42 12.52C2.29 11.26 1.35 9.57 1.35 7.44V5.43C1.35 4.88 1.35 4.41 1.39 4.05C1.43 3.67 1.51 3.31 1.74 3C1.98 2.68 2.33 2.49 2.7 2.34C3.07 2.2 3.57 2.05 4.17 1.88C4.98 1.64 5.69 1.36 6.26 1.1C6.65 0.92 6.97 0.77 7.23 0.67C7.48 0.57 7.74 0.49 8 0.49ZM8 1.69C7.97 1.69 7.89 1.7 7.67 1.79C7.45 1.87 7.17 2 6.76 2.19C6.14 2.47 5.38 2.77 4.51 3.03C3.88 3.21 3.45 3.34 3.15 3.46C2.84 3.58 2.74 3.67 2.71 3.71C2.66 3.77 2.61 3.89 2.58 4.17C2.55 4.46 2.55 4.85 2.55 5.43V7.44C2.55 9.19 3.32 10.61 4.31 11.72C5.31 12.83 6.52 13.61 7.34 14.05C7.77 14.28 7.84 14.31 8 14.31C8.16 14.31 8.23 14.28 8.66 14.05C9.48 13.61 10.69 12.83 11.69 11.72C12.68 10.61 13.45 9.19 13.45 7.44V5.43C13.45 4.85 13.45 4.46 13.42 4.17C13.39 3.89 13.34 3.77 13.29 3.71C13.26 3.67 13.16 3.58 12.85 3.46C12.55 3.34 12.12 3.21 11.49 3.03C10.62 2.77 9.86 2.47 9.24 2.19C8.83 2 8.55 1.87 8.33 1.79C8.11 1.7 8.02 1.69 8 1.69ZM9.96 5.86C10.2 5.63 10.58 5.63 10.81 5.86C11.05 6.1 11.05 6.48 10.81 6.71L7.89 9.63C7.78 9.74 7.63 9.81 7.47 9.81C7.31 9.81 7.16 9.74 7.05 9.63L5.63 8.21C5.39 7.98 5.39 7.6 5.63 7.37C5.86 7.13 6.24 7.13 6.48 7.37L7.47 8.36L9.96 5.86Z"/></symbol>
+<symbol id="zc-tracking" viewBox="0 0 16 16" fill="currentColor"><path d="M6.49 4.65C6.9 4.65 7.26 4.78 7.63 4.96C7.98 5.15 8.38 5.41 8.87 5.73L10.62 6.87C10.94 7.09 11.29 7.29 11.48 7.64C11.68 7.99 11.69 8.38 11.7 8.75C11.73 9.46 11.74 10.16 11.73 10.86C11.71 11.55 11.7 12.13 11.62 12.6C11.53 13.1 11.35 13.54 10.98 13.91C10.6 14.28 10.16 14.45 9.65 14.54C9.16 14.63 8.56 14.64 7.85 14.66C6.94 14.68 6.04 14.68 5.13 14.66C4.42 14.64 3.82 14.63 3.33 14.54C2.82 14.45 2.38 14.28 2.01 13.91C1.63 13.54 1.45 13.1 1.37 12.6C1.28 12.13 1.27 11.55 1.26 10.86C1.24 10.16 1.25 9.46 1.28 8.75C1.3 8.38 1.3 7.99 1.5 7.64C1.7 7.29 2.04 7.09 2.37 6.87L4.11 5.73C4.6 5.41 5 5.15 5.36 4.96C5.72 4.78 6.08 4.65 6.49 4.65ZM8.26 10.95C7.66 11.36 7.11 11.66 6.49 11.66C5.87 11.66 5.32 11.36 4.72 10.95L2.46 9.41C2.45 9.89 2.45 10.36 2.46 10.83C2.47 11.56 2.48 12.03 2.55 12.39C2.61 12.73 2.7 12.91 2.85 13.06C3 13.2 3.19 13.3 3.54 13.36C3.92 13.42 4.41 13.44 5.16 13.46C6.05 13.48 6.93 13.48 7.82 13.46C8.57 13.44 9.07 13.42 9.45 13.36C9.8 13.3 9.98 13.2 10.13 13.06C10.28 12.91 10.38 12.73 10.44 12.39C10.5 12.03 10.51 11.56 10.53 10.83C10.54 10.36 10.53 9.89 10.52 9.41L8.26 10.95ZM6.49 5.85C6.34 5.85 6.17 5.89 5.9 6.03C5.62 6.18 5.28 6.4 4.77 6.73L3.03 7.88C2.86 7.99 2.75 8.06 2.68 8.11L5.4 9.96C5.97 10.35 6.26 10.46 6.49 10.46C6.72 10.46 7.01 10.35 7.59 9.96L10.3 8.11C10.23 8.06 10.13 7.99 9.96 7.88L8.21 6.73C7.71 6.4 7.36 6.18 7.08 6.03C6.81 5.89 6.64 5.85 6.49 5.85ZM9.74 1.25C11.28 1.21 12.58 1.63 13.48 2.53C14.37 3.42 14.79 4.72 14.75 6.26C14.74 6.59 14.46 6.85 14.13 6.84C13.8 6.83 13.54 6.56 13.55 6.22C13.58 4.91 13.23 3.98 12.63 3.37C12.03 2.77 11.09 2.42 9.78 2.45C9.45 2.46 9.17 2.2 9.16 1.87C9.15 1.54 9.41 1.26 9.74 1.25ZM9.74 3.45C10.57 3.41 11.32 3.66 11.85 4.19C12.37 4.71 12.61 5.46 12.55 6.28C12.53 6.61 12.24 6.86 11.91 6.84C11.58 6.82 11.33 6.53 11.36 6.2C11.39 5.66 11.24 5.27 11 5.03C10.76 4.79 10.36 4.62 9.78 4.65C9.45 4.66 9.17 4.4 9.16 4.07C9.15 3.74 9.41 3.46 9.74 3.45Z"/></symbol>
+<symbol id="zc-settings-integrations" viewBox="0 0 16 16" fill="currentColor"><path d="M6.51 0.5C6.86 0.5 7.2 0.57 7.52 0.7C7.84 0.83 8.13 1.03 8.37 1.27C8.62 1.51 8.81 1.8 8.94 2.12C9.08 2.44 9.14 2.79 9.14 3.13V3.16H9.5C9.91 3.16 10.25 3.16 10.53 3.18C10.81 3.21 11.08 3.26 11.34 3.39C11.73 3.59 12.05 3.91 12.25 4.3C12.38 4.56 12.43 4.83 12.46 5.11C12.48 5.39 12.48 5.73 12.48 6.14V6.47C13.17 6.48 13.83 6.76 14.32 7.26C14.8 7.75 15.08 8.42 15.07 9.11C15.07 9.8 14.8 10.46 14.32 10.96C13.83 11.45 13.17 11.73 12.48 11.74V12.13C12.48 12.54 12.48 12.88 12.46 13.16C12.43 13.45 12.38 13.72 12.25 13.97C12.05 14.37 11.73 14.68 11.34 14.89C11.08 15.02 10.81 15.07 10.53 15.09C10.25 15.11 9.91 15.11 9.5 15.11H3.48C3.07 15.11 2.73 15.11 2.45 15.09C2.17 15.07 1.9 15.02 1.64 14.89C1.25 14.68 0.93 14.37 0.73 13.97C0.6 13.72 0.55 13.45 0.52 13.16C0.5 12.88 0.5 12.54 0.5 12.13V11.14C0.5 10.82 0.77 10.55 1.1 10.55H1.72C2.1 10.55 2.47 10.39 2.74 10.12C3.01 9.85 3.16 9.48 3.16 9.1C3.16 8.31 2.52 7.66 1.72 7.66H1.09C0.94 7.66 0.79 7.6 0.67 7.48C0.56 7.37 0.5 7.22 0.5 7.06V6.14C0.5 5.73 0.5 5.39 0.52 5.11C0.55 4.83 0.6 4.56 0.73 4.3C0.93 3.91 1.25 3.59 1.64 3.39C1.9 3.26 2.17 3.21 2.45 3.18C2.73 3.16 3.07 3.16 3.48 3.16H3.88V3.13C3.88 2.43 4.16 1.76 4.65 1.27C5.14 0.78 5.81 0.5 6.51 0.5ZM6.51 1.69C5.71 1.69 5.07 2.34 5.07 3.13V3.76C5.07 3.92 5.01 4.07 4.9 4.18C4.79 4.29 4.63 4.35 4.48 4.35H3.48C3.05 4.35 2.77 4.35 2.55 4.37C2.34 4.39 2.24 4.42 2.18 4.45C2.01 4.54 1.87 4.67 1.79 4.84C1.76 4.9 1.73 5 1.71 5.21C1.69 5.43 1.69 5.71 1.69 6.14V6.47H1.72C2.07 6.47 2.41 6.54 2.73 6.67C3.05 6.8 3.34 6.99 3.58 7.24C3.83 7.48 4.02 7.77 4.15 8.09C4.28 8.41 4.35 8.75 4.35 9.1C4.35 9.8 4.08 10.47 3.58 10.96C3.09 11.46 2.42 11.74 1.72 11.74H1.69V12.13C1.69 12.56 1.69 12.85 1.71 13.06C1.73 13.27 1.76 13.37 1.79 13.43C1.87 13.6 2.01 13.74 2.18 13.82C2.24 13.85 2.34 13.89 2.55 13.9C2.77 13.92 3.05 13.92 3.48 13.92H9.5C9.93 13.92 10.21 13.92 10.43 13.9C10.64 13.89 10.74 13.85 10.8 13.82C10.97 13.74 11.1 13.6 11.19 13.43C11.22 13.37 11.25 13.27 11.27 13.06C11.29 12.85 11.29 12.56 11.29 12.13V11.14C11.29 10.82 11.55 10.55 11.88 10.55H12.44C13.24 10.55 13.88 9.9 13.88 9.11C13.88 8.31 13.23 7.66 12.44 7.66H11.88C11.72 7.66 11.57 7.6 11.46 7.48C11.35 7.37 11.29 7.22 11.29 7.06V6.14C11.29 5.71 11.29 5.43 11.27 5.21C11.25 5 11.22 4.9 11.19 4.84C11.1 4.67 10.97 4.54 10.8 4.45C10.74 4.42 10.64 4.39 10.43 4.37C10.21 4.35 9.93 4.35 9.5 4.35H8.55C8.47 4.35 8.39 4.34 8.32 4.31C8.25 4.28 8.18 4.23 8.13 4.18C8.07 4.12 8.03 4.06 8 3.98C7.97 3.91 7.95 3.84 7.95 3.76V3.13C7.95 2.33 7.31 1.69 6.51 1.69Z"/></symbol>
+<symbol id="zc-zia" viewBox="0 0 17 16" fill="currentColor"><path d="M3.6 3.12C5.04 3.12 5.83 4.71 5.08 5.87L5.08 5.87L1.31 11.64L1.31 11.64C1.06 12.02 1.33 12.53 1.79 12.53H6.47C6.66 12.53 6.84 12.44 6.95 12.27L7.83 10.9L7.01 10.6V10.6C5.87 10.25 5.39 8.91 6.04 7.92L7.91 5.06C8.09 4.78 8.46 4.7 8.74 4.88C9.01 5.06 9.09 5.43 8.91 5.71L7.04 8.58V8.58C6.84 8.88 6.97 9.3 7.31 9.44L7.42 9.47L8.5 9.87L11.29 5.57C12.1 4.31 14.03 4.57 14.48 6.01L16 10.84L16 10.85C16.41 12.18 15.19 13.48 13.83 13.09C13.81 13.09 13.8 13.08 13.79 13.08L8.99 11.33L7.96 12.92L7.96 12.92C7.63 13.42 7.08 13.73 6.47 13.73H1.79C0.38 13.73 -0.48 12.16 0.31 10.98L4.08 5.21C4.33 4.82 4.05 4.32 3.6 4.32H0.6C0.27 4.32 0 4.05 0 3.72C0 3.39 0.27 3.12 0.6 3.12H3.6ZM13.34 6.37C13.19 5.9 12.56 5.81 12.29 6.22V6.23L9.66 10.29L14.17 11.94C14.59 12.05 14.99 11.65 14.85 11.2V11.2L13.34 6.37ZM10.01 2C10.54 2 10.96 2.43 10.96 2.95C10.96 3.48 10.54 3.9 10.01 3.9C9.49 3.9 9.06 3.48 9.06 2.95C9.06 2.43 9.49 2 10.01 2Z"/></symbol>
+<symbol id="zc-whatsapp" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.1C8.2 0.1 8.4 0.1 8.6 0.2C12.6 0.4 15.9 3.8 15.9 8C15.9 12.2 12.6 15.6 8.4 15.9H8C6.7 15.9 5.4 15.5 4.3 14.9L4.3 14.9C4.2 14.9 4.2 14.9 4.2 14.9L2 15.5L2 15.5L1 15.7C0.8 15.8 0.6 15.7 0.4 15.5C0.3 15.4 0.2 15.2 0.3 15L1.1 11.8C0.5 10.7 0.1 9.4 0.1 8C0.1 3.7 3.7 0.1 8 0.1ZM8 1.3C4.3 1.3 1.3 4.3 1.3 8C1.3 9.2 1.7 10.4 2.3 11.4C2.4 11.6 2.4 11.7 2.4 11.9L1.7 14.3L4.1 13.6L4.2 13.6C4.3 13.6 4.5 13.6 4.6 13.7C4.6 13.7 4.7 13.8 4.7 13.8C4.8 13.8 4.8 13.8 4.9 13.9H4.8C5.8 14.4 6.9 14.7 8 14.7H8.3C11.9 14.5 14.7 11.6 14.7 8C14.7 4.5 11.9 1.6 8.5 1.4C8.5 1.4 8.4 1.4 8.4 1.4C8.3 1.3 8.2 1.3 8 1.3ZM5.3 4.5C5.4 4.5 5.6 4.4 5.7 4.8C5.9 5.2 6.3 6.2 6.4 6.3C6.4 6.4 6.4 6.5 6.4 6.7C6.3 6.8 6.3 6.9 6.2 7C6.1 7.1 6 7.3 5.9 7.4C5.8 7.5 5.6 7.6 5.8 7.8C5.9 8 6.3 8.7 6.9 9.2C7.7 9.9 8.3 10.1 8.5 10.2C8.7 10.3 8.8 10.3 9 10.1C9.1 10 9.5 9.6 9.6 9.4C9.7 9.1 9.9 9.2 10.1 9.3C10.2 9.3 11.2 9.8 11.4 9.9L11.4 9.9C11.6 10 11.8 10 11.8 10.1C11.9 10.2 11.9 10.6 11.7 11.1C11.5 11.6 10.7 12 10.3 12.1C10 12.1 9.6 12.1 9.1 12C8.8 11.9 8.4 11.8 7.9 11.5C5.9 10.7 4.6 8.6 4.5 8.5C4.4 8.4 3.6 7.4 3.6 6.4C3.6 5.4 4.1 4.9 4.3 4.7C4.5 4.5 4.7 4.5 4.9 4.5H5.3Z"/></symbol>
+<symbol id="zc-info" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.09C12.37 0.09 15.91 3.63 15.91 8C15.91 12.37 12.37 15.91 8 15.91C3.63 15.91 0.09 12.37 0.09 8C0.09 3.63 3.63 0.09 8 0.09ZM8 1.28C4.29 1.28 1.28 4.29 1.28 8C1.28 11.71 4.29 14.71 8 14.71C11.71 14.71 14.71 11.71 14.71 8C14.71 4.29 11.71 1.28 8 1.28ZM8 7.4C8.33 7.4 8.6 7.67 8.6 8V10.93C8.6 11.26 8.33 11.52 8 11.52C7.67 11.52 7.4 11.26 7.4 10.93V8C7.4 7.67 7.67 7.4 8 7.4ZM8 4.47C8.43 4.47 8.78 4.82 8.78 5.26C8.78 5.69 8.43 6.04 8 6.04C7.57 6.04 7.22 5.69 7.22 5.26C7.22 4.82 7.57 4.47 8 4.47Z" fill="currentColor"/></symbol>
+<symbol id="zc-refresh" viewBox="0 0 16 16" fill="currentColor"><path d="M8.17 2C11.39 2 14 4.69 14 8C14 11.31 11.39 14 8.17 14C5.67 14 3.53 12.37 2.71 10.09C2.67 10.01 2.68 9.91 2.72 9.82C2.75 9.74 2.82 9.67 2.91 9.64C3.09 9.57 3.28 9.66 3.35 9.85C4.08 11.86 5.96 13.29 8.17 13.29C11.01 13.29 13.31 10.92 13.31 8C13.31 5.08 11.01 2.71 8.17 2.71C6.13 2.71 4.37 3.93 3.54 5.7L5.79 4.85C5.97 4.78 6.16 4.87 6.23 5.05C6.26 5.14 6.26 5.24 6.22 5.32C6.18 5.41 6.11 5.47 6.02 5.51L3.01 6.65C2.96 6.67 2.91 6.67 2.86 6.67C2.81 6.67 2.76 6.65 2.72 6.62C2.68 6.6 2.64 6.56 2.61 6.52C2.58 6.48 2.56 6.43 2.55 6.38L2.01 3.12C1.99 3.03 2.01 2.93 2.06 2.86C2.11 2.78 2.19 2.73 2.28 2.71C2.33 2.7 2.38 2.71 2.42 2.72C2.46 2.73 2.51 2.74 2.54 2.77C2.58 2.8 2.61 2.83 2.63 2.87C2.66 2.91 2.67 2.95 2.68 3L3.04 5.15C4.03 3.27 5.96 2 8.17 2Z" fill="currentColor"/></symbol>
+<symbol id="zc-check" viewBox="0 0 16 16" fill="currentColor"><path d="M11.91 4.03C12.17 3.71 12.64 3.65 12.97 3.91C13.29 4.17 13.35 4.64 13.09 4.97L7.34 12.22C7.21 12.38 7.01 12.49 6.79 12.5C6.58 12.51 6.37 12.43 6.22 12.28L2.97 9.03C2.68 8.74 2.68 8.26 2.97 7.97C3.26 7.68 3.74 7.68 4.03 7.97L6.68 10.62L11.91 4.03Z" fill="currentColor"/></symbol>
+<symbol id="zc-alert-triangle" viewBox="0 0 16 16" fill="currentColor"><path d="M15.77 12.49L9.53 1.86C9.37 1.59 9.15 1.38 8.88 1.23C8.61 1.08 8.31 1 8 1C7.69 1 7.39 1.08 7.12 1.23C6.85 1.38 6.63 1.59 6.48 1.86L0.23 12.49C0.08 12.74 0 13.02 0 13.32C0 13.61 0.08 13.89 0.23 14.15C0.38 14.41 0.61 14.63 0.87 14.78C1.14 14.93 1.45 15 1.75 15H14.25C14.55 15 14.86 14.93 15.13 14.78C15.39 14.63 15.62 14.41 15.77 14.15C15.92 13.89 16 13.61 16 13.32C16 13.02 15.92 12.74 15.77 12.49ZM7.43 6.6C7.43 6.45 7.49 6.31 7.6 6.2C7.7 6.1 7.85 6.04 8 6.04C8.15 6.04 8.3 6.1 8.4 6.2C8.51 6.31 8.57 6.45 8.57 6.6V9.4C8.57 9.55 8.51 9.69 8.4 9.8C8.3 9.9 8.15 9.96 8 9.96C7.85 9.96 7.7 9.9 7.6 9.8C7.49 9.69 7.43 9.55 7.43 9.4V6.6ZM8 12.76C7.83 12.76 7.67 12.71 7.52 12.62C7.38 12.53 7.27 12.39 7.21 12.24C7.14 12.09 7.13 11.92 7.16 11.76C7.19 11.59 7.27 11.44 7.39 11.33C7.51 11.21 7.67 11.13 7.83 11.1C8 11.06 8.17 11.08 8.33 11.14C8.48 11.21 8.62 11.32 8.71 11.45C8.81 11.59 8.86 11.75 8.86 11.92C8.86 12.14 8.77 12.36 8.61 12.51C8.45 12.67 8.23 12.76 8 12.76Z" fill="currentColor"/></symbol>
+<symbol id="zc-alert-circle" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.1C11.81 1.1 14.9 4.19 14.9 8C14.9 11.81 11.81 14.9 8 14.9C4.19 14.9 1.1 11.81 1.1 8C1.1 4.19 4.19 1.1 8 1.1ZM8 2.3C4.85 2.3 2.3 4.85 2.3 8C2.3 11.15 4.85 13.7 8 13.7C11.15 13.7 13.7 11.15 13.7 8C13.7 4.85 11.15 2.3 8 2.3ZM8 10.6C8.33 10.6 8.6 10.87 8.6 11.2V11.3C8.6 11.63 8.33 11.9 8 11.9C7.67 11.9 7.4 11.63 7.4 11.3V11.2C7.4 10.87 7.67 10.6 8 10.6ZM8 4C8.33 4 8.6 4.27 8.6 4.6V8.7C8.6 9.03 8.33 9.3 8 9.3C7.67 9.3 7.4 9.03 7.4 8.7V4.6C7.4 4.27 7.67 4 8 4Z" fill="currentColor"/></symbol>
+<symbol id="zc-link" viewBox="0 0 16 16" fill="currentColor"><path d="M7.25 5.58C8.09 5.58 8.89 5.91 9.49 6.5C9.77 6.77 9.77 7.21 9.5 7.49C9.23 7.77 8.79 7.77 8.51 7.5C8.17 7.17 7.72 6.99 7.25 6.99C6.78 6.99 6.33 7.17 5.99 7.5L4.04 9.45C3.79 9.79 3.67 10.21 3.7 10.63C3.73 11.06 3.92 11.47 4.23 11.77C4.53 12.08 4.94 12.26 5.37 12.29C5.79 12.32 6.21 12.2 6.55 11.96L7.3 11.2C7.58 10.93 8.02 10.93 8.29 11.2C8.57 11.48 8.57 11.92 8.29 12.19L7.49 12.99C7.47 13.02 7.45 13.04 7.42 13.06C6.8 13.52 6.04 13.75 5.27 13.69C4.51 13.64 3.78 13.31 3.24 12.76C2.69 12.22 2.36 11.49 2.31 10.73C2.25 9.96 2.48 9.2 2.94 8.58L3 8.5L5.01 6.5C5.61 5.91 6.41 5.58 7.25 5.58ZM10.73 2.31C11.49 2.36 12.22 2.69 12.76 3.24C13.31 3.78 13.64 4.5 13.69 5.27C13.75 6.04 13.52 6.8 13.06 7.42C13.04 7.45 13.02 7.47 12.99 7.49L10.99 9.5C10.39 10.09 9.59 10.41 8.75 10.41C7.91 10.41 7.11 10.09 6.51 9.5C6.23 9.23 6.23 8.79 6.5 8.51C6.77 8.23 7.21 8.23 7.49 8.5C7.83 8.83 8.28 9.01 8.75 9.01C9.22 9.01 9.67 8.83 10.01 8.5L11.96 6.55C12.21 6.21 12.33 5.79 12.3 5.37C12.26 4.94 12.08 4.53 11.77 4.23C11.47 3.92 11.06 3.73 10.63 3.7C10.21 3.67 9.79 3.79 9.45 4.04L8.7 4.79C8.42 5.07 7.98 5.07 7.7 4.79C7.43 4.52 7.43 4.08 7.7 3.8L8.5 3C8.53 2.98 8.55 2.96 8.58 2.94C9.2 2.48 9.96 2.25 10.73 2.31Z" fill="currentColor"/></symbol>
+<symbol id="zc-lock" viewBox="0 0 16 16" fill="currentColor"><path d="M7.59 0C8.59 0 9.54 0.39 10.24 1.1C10.94 1.8 11.34 2.75 11.34 3.75V5.04C11.92 5.2 12.45 5.53 12.85 5.98C13.25 6.44 13.5 7 13.58 7.6C13.69 8.37 13.78 9.18 13.78 10.01C13.78 10.85 13.69 11.66 13.58 12.42C13.39 13.87 12.19 15.01 10.71 15.08C9.68 15.13 8.63 15.15 7.59 15.15C6.55 15.15 5.51 15.13 4.47 15.08C3 15.01 1.8 13.87 1.6 12.42C1.5 11.66 1.41 10.85 1.41 10.01C1.41 9.18 1.5 8.37 1.6 7.6C1.68 7 1.94 6.44 2.34 5.99C2.74 5.53 3.26 5.2 3.85 5.04V3.75C3.85 2.75 4.24 1.8 4.95 1.1C5.65 0.39 6.6 0 7.59 0ZM7.59 6.1C6.5 6.1 5.51 6.12 4.53 6.17C3.66 6.21 2.94 6.89 2.82 7.77C2.72 8.52 2.64 9.26 2.64 10.01C2.64 10.76 2.72 11.51 2.82 12.26C2.94 13.14 3.66 13.82 4.53 13.86C5.55 13.91 6.57 13.93 7.59 13.93C8.69 13.93 9.68 13.9 10.66 13.86C11.52 13.82 12.25 13.14 12.37 12.26C12.47 11.51 12.55 10.76 12.55 10.01C12.55 9.26 12.47 8.52 12.37 7.77C12.25 6.89 11.52 6.21 10.66 6.17C9.64 6.12 8.62 6.1 7.6 6.1H7.59ZM7.7 9.21C7.8 9.23 7.9 9.27 7.99 9.32C8.08 9.37 8.15 9.45 8.21 9.53C8.33 9.69 8.38 9.88 8.38 10.06C8.38 10.25 8.32 10.43 8.21 10.59C8.14 10.69 8.05 10.77 7.94 10.82C7.83 10.88 7.71 10.91 7.59 10.91C7.47 10.91 7.35 10.88 7.25 10.82C7.14 10.77 7.05 10.69 6.98 10.59C6.89 10.47 6.84 10.34 6.82 10.19L6.81 10.06L6.82 9.92C6.84 9.78 6.89 9.65 6.98 9.53C7.05 9.43 7.14 9.35 7.25 9.29C7.35 9.24 7.47 9.21 7.59 9.21L7.7 9.21ZM7.59 1.22C6.2 1.22 5.07 2.35 5.07 3.75V4.92C6.75 4.86 8.43 4.86 10.11 4.92V3.74C10.11 2.35 8.99 1.22 7.59 1.22V1.22Z" fill="currentColor"/></symbol>
+<symbol id="zc-profile" viewBox="0 0 16 16" fill="currentColor"><path d="M5.67 0.35C6.86 -0.02 8.13 -0.1 9.36 0.12C10.59 0.33 11.76 0.83 12.76 1.57C13.77 2.32 14.58 3.29 15.14 4.4C15.71 5.52 16 6.75 16 8L15.99 8.29C15.94 9.78 15.47 11.22 14.64 12.46C13.91 13.55 12.92 14.44 11.76 15.06C10.61 15.68 9.31 16 8 16L8 16V16C6.69 16 5.39 15.68 4.24 15.06C3.15 14.48 2.21 13.66 1.5 12.66L1.36 12.46C0.66 11.42 0.22 10.23 0.06 8.99C-0.09 7.75 0.04 6.49 0.46 5.32C0.88 4.14 1.57 3.08 2.48 2.21C3.38 1.35 4.47 0.71 5.67 0.35ZM5.63 11.16C5.12 11.16 4.62 11.33 4.21 11.63C3.94 11.83 3.72 12.08 3.56 12.37C4 12.82 4.51 13.2 5.07 13.5C5.97 13.98 6.98 14.23 8 14.23H8C9.02 14.23 10.03 13.98 10.93 13.5C11.49 13.2 12 12.82 12.44 12.37C12.03 11.65 11.26 11.16 10.37 11.16H5.63ZM9.06 1.86C8.1 1.69 7.12 1.75 6.18 2.04C5.25 2.32 4.4 2.82 3.7 3.49C2.99 4.16 2.45 4.99 2.13 5.91C1.8 6.83 1.69 7.81 1.81 8.77C1.91 9.57 2.17 10.34 2.56 11.04C2.76 10.79 3 10.56 3.26 10.36C3.95 9.85 4.78 9.58 5.63 9.58H10.37C11.22 9.58 12.05 9.86 12.73 10.36C13 10.56 13.23 10.79 13.44 11.04C13.96 10.11 14.23 9.07 14.23 8V8C14.23 7.03 14 6.06 13.57 5.2C13.13 4.33 12.49 3.57 11.71 2.99C10.93 2.41 10.02 2.02 9.06 1.86ZM8.79 5.63C8.79 5.42 8.71 5.22 8.56 5.07C8.41 4.92 8.21 4.84 8 4.84C7.79 4.84 7.59 4.92 7.44 5.07C7.29 5.22 7.21 5.42 7.21 5.63C7.21 5.84 7.29 6.04 7.44 6.19C7.59 6.33 7.79 6.42 8 6.42C8.21 6.42 8.41 6.33 8.56 6.19C8.71 6.04 8.79 5.84 8.79 5.63ZM10.37 5.63C10.37 6.26 10.12 6.86 9.68 7.3C9.23 7.75 8.63 8 8 8C7.37 8 6.77 7.75 6.32 7.3C5.88 6.86 5.63 6.26 5.63 5.63C5.63 5 5.88 4.39 6.32 3.95C6.77 3.5 7.37 3.25 8 3.25C8.63 3.25 9.23 3.5 9.68 3.95C10.12 4.39 10.37 5 10.37 5.63Z" fill="currentColor"/></symbol>
+<symbol id="zc-trash" viewBox="0 0 16 16" fill="currentColor"><path d="M10 1.9C10.33 1.9 10.6 2.17 10.6 2.5V3.4H13.5C13.83 3.4 14.1 3.67 14.1 4C14.1 4.33 13.83 4.6 13.5 4.6H13.06L12.5 12.54C12.5 12.55 12.5 12.55 12.5 12.56C12.46 12.96 12.27 13.32 11.98 13.59C11.68 13.85 11.3 14 10.9 14V14H5.1V14C4.7 14 4.32 13.85 4.02 13.59C3.73 13.32 3.54 12.96 3.5 12.56C3.5 12.55 3.5 12.55 3.5 12.54L2.94 4.6H2.5C2.17 4.6 1.9 4.33 1.9 4C1.9 3.67 2.17 3.4 2.5 3.4H5.4V2.5C5.4 2.17 5.67 1.9 6 1.9H10ZM4.7 12.44L4.71 12.51C4.73 12.58 4.77 12.65 4.83 12.7C4.9 12.76 5 12.8 5.1 12.8H10.9C11 12.8 11.1 12.76 11.17 12.7C11.25 12.63 11.29 12.54 11.3 12.44L11.86 4.6H4.14L4.7 12.44ZM6.5 6.4C6.83 6.4 7.1 6.67 7.1 7V11C7.1 11.33 6.83 11.6 6.5 11.6C6.17 11.6 5.9 11.33 5.9 11V7C5.9 6.67 6.17 6.4 6.5 6.4ZM9.5 6.4C9.83 6.4 10.1 6.67 10.1 7V11C10.1 11.33 9.83 11.6 9.5 11.6C9.17 11.6 8.9 11.33 8.9 11V7C8.9 6.67 9.17 6.4 9.5 6.4ZM6.6 3.4H9.4V3.1H6.6V3.4Z" fill="currentColor"/></symbol>
+<symbol id="zc-down" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.04C8.33 0.04 8.6 0.31 8.6 0.64V13.91L13.3 9.21C13.53 8.98 13.91 8.98 14.15 9.21C14.38 9.45 14.38 9.83 14.15 10.06L8.43 15.78C8.37 15.84 8.31 15.88 8.23 15.91C8.22 15.92 8.21 15.92 8.2 15.92C8.14 15.95 8.07 15.96 8 15.96L8 15.96V15.96C7.99 15.96 7.98 15.96 7.97 15.96C7.92 15.96 7.87 15.95 7.83 15.93C7.74 15.91 7.65 15.86 7.58 15.79L1.85 10.06C1.62 9.83 1.62 9.45 1.85 9.22C2.09 8.98 2.47 8.98 2.7 9.21L7.4 13.91V0.64C7.4 0.31 7.67 0.04 8 0.04Z" fill="currentColor"/></symbol>
+</svg>
+
+<div class="sp-shell">
+  <!-- TOP BAR (DS Settings — light) -->
+  <header class="sp-topbar">
+    <div class="sp-brand">
+      <svg class="sp-brand__logo" aria-hidden="true"><use href="#zc-logo"/></svg>
+      <div class="sp-brand__divider"></div>
+      <span class="sp-brand__ws">Zylker</span>
+    </div>
+    <div class="sp-topbar__spacer"></div>
+    <div class="sp-search">
+      <svg class="sp-search__icon" aria-hidden="true"><use href="#zc-search"/></svg>
+      <input class="sp-search__input" type="text" placeholder="Search in Settings ( / )" aria-label="Search in settings">
+    </div>
+    <div class="sp-topbar__spacer"></div>
+    <div class="sp-topbar__actions">
+      <button class="sp-tbtn sp-tbtn--create" aria-label="Create new"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button>
+      <button class="sp-tbtn" aria-label="Notifications"><svg aria-hidden="true"><use href="#zc-bell"/></svg><span class="sp-tbadge"><span>8</span></span></button>
+      <button class="sp-tbtn" aria-label="Settings"><svg aria-hidden="true"><use href="#zc-settings"/></svg></button>
+      <img class="sp-avatar" src="data:image/jpeg;base64,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" alt="Priya Nair">
+    </div>
+  </header>
+
+  <div class="sp-body">
+    <!-- LHS -->
+    <nav class="sp-lhs" aria-label="Settings navigation">
+      <button class="sp-lhs__back"><svg aria-hidden="true"><use href="#zc-arrow-back"/></svg><span>Go Back</span></button>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings"/></svg><span class="sp-acc__label">General</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">Organization</a>
+          <a class="sp-nav-item">Notifications</a>
+          <a class="sp-nav-item">Subscription</a>
+        </div></div>
+      </div>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-users-and-controls"/></svg><span class="sp-acc__label">Users and Controls</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">Users</a>
+          <a class="sp-nav-item">Roles and permissions</a>
+          <a class="sp-nav-item">Workspace</a>
+        </div></div>
+      </div>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-contacts-and-customization"/></svg><span class="sp-acc__label">Contacts and Customization</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">Topics</a>
+          <a class="sp-nav-item">Contact Scoring</a>
+          <a class="sp-nav-item">Manage fields</a>
+          <a class="sp-nav-item">Signup pages and emails</a>
+        </div></div>
+      </div>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-email"/></svg><span class="sp-acc__label">Email</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">Tracking</a>
+          <a class="sp-nav-item">Senders and Authentication</a>
+          <a class="sp-nav-item">Bot Filter</a>
+        </div></div>
+      </div>
+      <div class="sp-acc" id="accWhatsapp">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-whatsapp"/></svg><span class="sp-acc__label">WhatsApp</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item" id="navOverview" onclick="go('overview')">Overview</a>
+          <a class="sp-nav-item" id="navPrefs" onclick="go('preferences')">Preferences</a>
+        </div></div>
+      </div>
+      <div class="sp-acc" id="accSms">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-sms"/></svg><span class="sp-acc__label">SMS</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item" id="navGateways" onclick="go('sms-gateways')">Gateways</a>
+          <a class="sp-nav-item" id="navSmsPrefs" onclick="go('sms-preferences')">Preferences</a>
+        </div></div>
+      </div>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-consent-and-privacy"/></svg><span class="sp-acc__label">Consent and Privacy</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">Compliances</a>
+          <a class="sp-nav-item">Double Opt-In</a>
+          <a class="sp-nav-item">Audit Logs</a>
+        </div></div>
+      </div>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-tracking"/></svg><span class="sp-acc__label">Tracking and Sending Limits</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">UTM Parameters</a>
+          <a class="sp-nav-item">Frequency Capping</a>
+        </div></div>
+      </div>
+      <div class="sp-acc sp-acc--open" id="accIntegrations">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-integrations"/></svg><span class="sp-acc__label">Integrations</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item sp-nav-item--selected" id="navApps" onclick="go('apps')">Apps</a>
+          <a class="sp-nav-item" id="navWebhooks">Webhooks</a>
+        </div></div>
+      </div>
+      <div class="sp-acc">
+        <button class="sp-acc__header" onclick="toggleCat(this)"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-zia"/></svg><span class="sp-acc__label">Zia</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items"><div class="sp-acc__itemswrap">
+          <a class="sp-nav-item">Models</a>
+        </div></div>
+      </div>
+    </nav>
+
+    <main class="sp-content">
+      <!-- SCREEN: APPS → WHATSAPP -->
+      <section class="screen is-active" id="screen-apps">
+        <div class="sp-ptopbar">
+          <div class="sp-ptopbar__title"><button class="back" aria-label="Back to Apps"><svg aria-hidden="true"><use href="#zc-arrow-back"/></svg></button>Apps</div>
+        </div>
+        <div class="sp-scroll">
+          <section class="sp-section">
+            <div class="apps-header">
+              <div class="apps-apptitle">
+                <div class="apps-apptitle__icon"><svg aria-hidden="true"><use href="#zc-whatsapp"/></svg></div>
+                <div class="apps-apptitle__name">WhatsApp</div>
+              </div>
+              <div class="sp-section__actions">
+                <button class="sp-btn sp-btn--primary"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Create Campaign</button>
+                <div class="menu-wrap">
+                  <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="More options" onclick="toggleMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button>
+                  <div class="menu" id="appsMenu">
+                    <button class="menu__item" onclick="closeAllMenus()">Help</button>
+                    <button class="menu__item" onclick="addAccount()">Add another account</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="sp-section sp-section--flush">
+            <table class="ov-table ap-table">
+              <thead><tr>
+                <th style="width:30%">Account Name</th>
+                <th style="width:14%">Status</th>
+                <th style="width:20%">Connected On</th>
+                <th style="width:26%">Linked Workspace</th>
+                <th style="width:10%"></th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="ap-name"><span class="ap-name__t">Zoho Campaigns Local</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>Apr 27, 2026<span class="ap-conn-by">by Priya Nair</span></td>
+                  <td>North Region Dealers</td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><div class="ap-name"><span class="ap-name__t">Acme Dealer WABA</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>Sep 10, 2026<span class="ap-conn-by">by Rahul Verma</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><div class="ap-name"><span class="ap-name__t">Metro Retail WA</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>Aug 02, 2026<span class="ap-conn-by">by Anita Desai</span></td>
+                  <td>Metro Retail</td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><div class="ap-name"><span class="ap-name__t">South Dealers WA</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>Jul 19, 2026<span class="ap-conn-by">by Priya Nair</span></td>
+                  <td>South Region Dealers</td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><div class="ap-name"><span class="ap-name__t">East Dealers WA</span></div></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>Jun 30, 2026<span class="ap-conn-by">by Karan Mehta</span></td>
+                  <td>East Region Dealers</td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><div class="ap-name"><span class="ap-name__t">Coastal Retail WA</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>Jun 12, 2026<span class="ap-conn-by">by Anita Desai</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><div class="ap-name"><span class="ap-name__t">Harbor Dealers WA</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>May 28, 2026<span class="ap-conn-by">by Rahul Verma</span></td>
+                  <td>Harbor Dealers</td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><div class="ap-name"><span class="ap-name__t">Prime Motors WA</span></div></td>
+                  <td><span class="ap-status ap-status--ok">Approved</span></td>
+                  <td>May 05, 2026<span class="ap-conn-by">by Karan Mehta</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+        <div class="ap-pagination">
+          <div class="ap-pagination__total"><span class="ap-pg-total__label">Total Count:</span><button class="ap-pg-view" onclick="revealCount(this)">View</button></div>
+          <div class="ap-pg-controls">
+            <button class="ap-pg-cell ap-pg-cell--perpage" aria-label="Rows per page"><svg class="ap-pg-cell__caret" aria-hidden="true"><use href="#zc-caret"/></svg>50 per page</button>
+            <div class="ap-pg-cell ap-pg-cell--range">
+              <button class="ap-pg-arrow ap-pg-arrow--prev" disabled aria-label="Previous page"><svg aria-hidden="true"><use href="#zc-caret"/></svg></button>
+              <span>1 - 50</span>
+              <button class="ap-pg-arrow ap-pg-arrow--next" aria-label="Next page"><svg aria-hidden="true"><use href="#zc-caret"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: WORKSPACE OVERVIEW -->
+      <section class="screen" id="screen-overview">
+        <div class="sp-ptopbar">
+          <div class="sp-ptopbar__title">Overview</div>
+          <div class="sp-ptopbar__actions">
+            <span class="ws-switch ws-switch--topbar"><button class="ws-switch__trigger" onclick="toggleWsMenu(event)"><span class="ws-switch__label">Workspace:</span><span class="ws-cur-name">North Region Dealers</span><svg aria-hidden="true"><use href="#zc-caret"/></svg></button><div class="ws-switch__menu"><button class="ws-switch__item ws-switch__item--sel" onclick="switchWs('North Region Dealers',true)">North Region Dealers</button><button class="ws-switch__item" onclick="switchWs('West Region Dealers',false)">West Region Dealers</button></div></span>
+            <button class="sp-btn sp-btn--secondary">View credits</button>
+          </div>
+        </div>
+        <div class="sp-scroll">
+          <div id="overviewAssigned">
+            <section class="sp-section">
+              <div class="sp-section__head">
+                <div class="sp-section__title">WhatsApp Business account details <span class="ws-sep">•</span><span class="ov-acc-name">Zoho Campaigns Local</span></div>
+                <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="Refresh account details"><svg aria-hidden="true"><use href="#zc-refresh"/></svg></button>
+              </div>
+              <div class="sp-fields">
+                <div class="sp-field"><span class="sp-field__label">Account ID</span><span class="sp-field__value">122103562760008817</span></div>
+                <div class="sp-field"><span class="sp-field__label">Account Status</span><span class="sp-field__value is-ok">Approved</span></div>
+                <div class="sp-field"><span class="sp-field__label">Message Limit</span><span class="sp-field__value">1,00,000</span></div>
+              </div>
+            </section>
+            <section class="sp-section sp-section--flush">
+              <div class="sp-section__head" style="padding:0 20px;">
+                <div class="sp-section__title">Phone Numbers</div>
+                <div class="sp-section__actions">
+                  <label class="sp-input-search"><svg aria-hidden="true"><use href="#zc-search"/></svg><input type="text" placeholder="Search"></label>
+                  <div class="sp-split"><button class="sp-btn sp-btn--primary">Associate Number</button><button class="sp-split__drop" aria-label="More options"><svg aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+                </div>
+              </div>
+              <table class="ov-table">
+                <thead><tr>
+                  <th style="width:30%"><span class="sp-th">Display Name <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                  <th style="width:26%"><span class="sp-th">Phone Number <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                  <th style="width:22%"><span class="sp-th">Quality Rating <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                  <th style="width:22%"><span class="sp-th">Connection Status <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                </tr></thead>
+                <tbody><tr><td>Zoho Campaigns Local Developer</td><td>+12083522602</td><td><span class="sp-quality--high">High</span></td><td>Connected</td></tr></tbody>
+              </table>
+            </section>
+          </div>
+
+          <div id="overviewEmpty" style="display:none;">
+            <section class="sp-section">
+              <div class="empty">
+                <img class="empty__illo" src="data:image/png;base64,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" alt="" width="161" height="140">
+                <div class="empty__text">
+                  <div class="empty__title">No WhatsApp Business Account assigned</div>
+                  <div class="empty__desc">This workspace doesn't have a WABA linked yet. Please contact your organisation's Super Admin to get one assigned. WhatsApp campaign creation and template selection are disabled until then.</div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: PREFERENCES -->
+      <section class="screen" id="screen-preferences">
+        <div class="sp-ptopbar">
+          <div class="sp-ptopbar__title">Preferences <span class="org-tag">Organisation-wide</span></div>
+        </div>
+        <div class="sp-scroll">
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">Opt-in and opt-out keywords</div>
+              <div class="pref-block__desc">A contact is automatically opted in or out when they reply with one of these keywords.</div>
+              <div class="kw-groups">
+                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag">START</span><span class="zc-tag">SUBSCRIBE</span><span class="zc-tag">YES</span></div></div>
+                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag">STOP</span><span class="zc-tag">STOPALL</span><span class="zc-tag">UNSUBSCRIBE</span><span class="zc-tag">CANCEL</span></div></div>
+              </div>
+              <button class="pref-manage" onclick="openKeywords()"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage</button>
+            </div>
+          </section>
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">Default Footer Text <button class="sp-toggle is-on" role="switch" aria-checked="true" aria-label="Default footer text" onclick="toggleSwitch(this)"><span class="sp-toggle__knob"></span></button></div>
+              <div class="pref-block__desc">Add a short line of text to the bottom of your marketing message template.</div>
+              <input class="pref-input" type="text" value="Reply STOP to unsubscribe">
+            </div>
+          </section>
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">Click Tracking <button class="sp-toggle" role="switch" aria-checked="false" aria-label="Click tracking" onclick="toggleSwitch(this)"><span class="sp-toggle__knob"></span></button></div>
+              <div class="pref-block__desc">Automatically track all links in your WhatsApp campaigns to measure engagement.</div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- SCREEN: SMS GATEWAYS -->
+      <section class="screen" id="screen-sms-gateways">
+        <div class="sp-ptopbar">
+          <div class="sp-ptopbar__title">India</div>
+          <div class="sp-ptopbar__actions">
+            <button class="sp-btn sp-btn--primary">Register Sender ID</button>
+            <span class="ptopbar-sep" aria-hidden="true"></span>
+            <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="Close current screen"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button>
+          </div>
+        </div>
+        <div class="sp-scroll">
+          <section class="sp-section sp-section--flush">
+            <table class="ov-table sms-table">
+              <thead><tr>
+                <th style="width:24%">Sender ID</th>
+                <th style="width:16%">Status</th>
+                <th style="width:28%">Created On</th>
+                <th style="width:32%">Linked Workspace</th>
+                
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="sms-id">999999</span></td>
+                  <td><span class="ap-status ap-status--inactive">Inactive</span></td>
+                  <td>Mar 30, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>North Region Dealers</td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><span class="sms-id">678678</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>May 16, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">523234</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>May 16, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>Metro Retail</td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><span class="sms-id">111111</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>Apr 13, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">bnbmnb</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>Apr 12, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>South Region Dealers</td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">ZOHOZC</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>Apr 13, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>Harbor Dealers</td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">777777</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>Apr 06, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>Coastal Retail</td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">555555</span></td>
+                  <td><span class="ap-status ap-status--ok">Active</span></td>
+                  <td>Apr 01, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>Prime Motors</td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><span class="sms-id">444444</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>Mar 31, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">666666</span></td>
+                  <td><span class="ap-status ap-status--ok">Active</span></td>
+                  <td>Mar 31, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>East Region Dealers</td>
+                </tr>
+                <tr>
+                  <td><span class="sms-id">888888</span></td>
+                  <td><span class="ap-status ap-status--inactive">Inactive</span></td>
+                  <td>Mar 31, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td>Central Operations</td>
+                </tr>
+                <tr class="is-unlinked">
+                  <td><span class="sms-id">TESTIN</span></td>
+                  <td><span class="ap-status ap-status--pending">Pending</span></td>
+                  <td>May 30, 2026<span class="ap-conn-by">by Mathan</span></td>
+                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+        <div class="ap-pagination">
+          <div class="ap-pagination__total"><span class="ap-pg-total__label">Total Count:</span><button class="ap-pg-view" onclick="revealCount(this)">View</button></div>
+          <div class="ap-pg-controls">
+            <button class="ap-pg-cell ap-pg-cell--perpage" aria-label="Rows per page"><svg class="ap-pg-cell__caret" aria-hidden="true"><use href="#zc-caret"/></svg>50 per page</button>
+            <div class="ap-pg-cell ap-pg-cell--range">
+              <button class="ap-pg-arrow ap-pg-arrow--prev" disabled aria-label="Previous page"><svg aria-hidden="true"><use href="#zc-caret"/></svg></button>
+              <span>1 - 50</span>
+              <button class="ap-pg-arrow ap-pg-arrow--next" aria-label="Next page"><svg aria-hidden="true"><use href="#zc-caret"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: SMS PREFERENCES -->
+      <section class="screen" id="screen-sms-preferences">
+        <div class="sp-ptopbar">
+          <div class="sp-ptopbar__title">Preferences</div>
+          <div class="sp-ptopbar__actions"><button class="sp-btn sp-btn--secondary">View Subscription</button></div>
+        </div>
+        <div class="sp-scroll">
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">Enable Unsubscribe Link <button class="sp-toggle is-on" role="switch" aria-checked="true" aria-label="Enable unsubscribe link" onclick="toggleSwitch(this)"><span class="sp-toggle__knob"></span></button></div>
+              <div class="pref-block__desc">Enable this option to include an unsubscribe link in your SMS campaign messages. The URL Prefix and URL Suffix will be appended to the Unsubscribe URL in the format: URL Prefix (+) Unsubscribe URL (+) URL Suffix while sending the SMS campaign.</div>
+              <div class="sms-fields">
+                <div class="sms-field"><span class="sms-field__label">URL Prefix text</span><input class="pref-input" id="smsPrefixInput" type="text" value="To Optout" oninput="updateSmsPreview()"></div>
+                <div class="sms-field"><span class="sms-field__label">URL Suffix text</span><input class="pref-input" id="smsSuffixInput" type="text" placeholder="Enter suffix text" oninput="updateSmsPreview()"></div>
+              </div>
+              <div class="sms-preview">
+                <div class="sms-preview__label">Preview</div>
+                <div class="sms-preview__bubble">
+                  <div class="sms-preview__sk" style="width:35%"></div>
+                  <div class="sms-preview__sk" style="width:85%"></div>
+                  <div class="sms-preview__sk" style="width:80%"></div>
+                  <div class="sms-preview__text"><span id="smsPrefix">To Optout </span><a href="#" onclick="return false">https://zc.localzoho.com/dk7?rd=1499602d2</a><span id="smsSuffix"></span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">Opt-in and opt-out keywords</div>
+              <div class="pref-block__desc">A contact is automatically opted in or out when they reply with one of these keywords.</div>
+              <div class="kw-groups">
+                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag">START</span><span class="zc-tag">SUBSCRIBE</span><span class="zc-tag">YES</span></div></div>
+                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag">STOP</span><span class="zc-tag">STOPALL</span><span class="zc-tag">UNSUBSCRIBE</span><span class="zc-tag">CANCEL</span></div></div>
+              </div>
+              <button class="pref-manage" onclick="openKeywords()"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage</button>
+            </div>
+          </section>
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">SMS Click Tracking <button class="sp-toggle is-on" role="switch" aria-checked="true" aria-label="SMS click tracking" onclick="toggleSwitch(this)"><span class="sp-toggle__knob"></span></button></div>
+              <div class="pref-block__desc">Automatically shorten and track all links in your SMS campaigns to measure engagement.</div>
+            </div>
+          </section>
+        </div>
+        <div class="sp-pagefooter">
+          <button class="sp-btn sp-btn--primary">Save</button>
+          <button class="sp-btn sp-btn--tertiary">Cancel</button>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- SLIDE-IN: MANAGE KEYWORDS -->
+<div class="zc-drawer-scrim" id="kwDrawer">
+  <aside class="zc-drawer" role="dialog" aria-modal="true" aria-labelledby="kwTitle">
+    <div class="zc-drawer__header"><div class="zc-drawer__title" id="kwTitle">Manage Keywords</div><button class="zc-drawer__close" aria-label="Close" onclick="closeKeywords()"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-drawer__tabs">
+      <span class="zc-drawer__tabind" id="kwTabInd" aria-hidden="true"></span>
+      <button class="zc-drawer__tab is-active" id="kwTabIn" onclick="switchKwTab('in')">Opt-in</button>
+      <button class="zc-drawer__tab" id="kwTabOut" onclick="switchKwTab('out')">Opt-out</button>
+    </div>
+    <div class="zc-drawer__body">
+      <div id="kwPanelIn" class="kw-panel">
+        <div class="kw-col-head"><span class="kw-col-head__kw">Keyword</span><span class="kw-col-head__arrowgap"></span><span>Subscribe when</span></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="START" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Contains word<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="SUBSCRIBE" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Contains word<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="YES" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Exact match<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button><button class="kw-add" aria-label="Add keyword" onclick="addKwRow(this)"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button></div>
+      </div>
+      <div id="kwPanelOut" class="kw-panel" style="display:none;">
+        <div class="kw-col-head"><span class="kw-col-head__kw">Keyword</span><span class="kw-col-head__arrowgap"></span><span>Unsubscribe when</span></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="STOP" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Contains word<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="STOPALL" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Contains word<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="UNSUBSCRIBE" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Contains word<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button></div>
+        <div class="kw-edit-row"><input class="kw-input" type="text" value="CANCEL" aria-label="Keyword"><span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span><button class="kw-match" onclick="openMatchMenu(this)">Exact match<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button><button class="kw-add" aria-label="Add keyword" onclick="addKwRow(this)"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button></div>
+      </div>
+    </div>
+    <div class="zc-drawer__footer"><button class="sp-btn sp-btn--primary" onclick="closeKeywords()">Save</button><button class="sp-btn sp-btn--tertiary" onclick="closeKeywords()">Cancel</button></div>
+  </aside>
+</div>
+
+<div class="menu" id="rowMenu" style="position:fixed;top:auto;right:auto;">
+  <button class="menu__item" onclick="rowDisconnect()">Disconnect</button>
+</div>
+
+<!-- match-type picker (DS Menu) for Manage Keywords rows -->
+<div class="menu" id="matchMenu" style="position:fixed;top:auto;right:auto;">
+  <button class="menu__item" onclick="pickMatch('Contains word')">Contains word</button>
+  <button class="menu__item" onclick="pickMatch('Exact match')">Exact match</button>
+</div>
+
+<!-- inline workspace picker (DS Menu) for the Linked Workspace column -->
+<div class="menu" id="cellWsMenu" style="position:fixed;top:auto;right:auto;">
+  <button class="menu__item" onclick="pickCellWs('South Region Dealers')">South Region Dealers</button>
+  <button class="menu__item" onclick="pickCellWs('East Region Dealers')">East Region Dealers</button>
+  <button class="menu__item" onclick="pickCellWs('West Region Dealers')">West Region Dealers</button>
+  <button class="menu__item" onclick="pickCellWs('Central Operations')">Central Operations</button>
+</div>
+
+<div class="zc-toast-container" id="toasts"></div>
+
+<script>
+  var unassignedExists=true;
+  var SCREENS={
+    'apps':{acc:'accIntegrations',nav:'navApps'},
+    'overview':{acc:'accWhatsapp',nav:'navOverview'},
+    'preferences':{acc:'accWhatsapp',nav:'navPrefs'},
+    'sms-gateways':{acc:'accSms',nav:'navGateways'},
+    'sms-preferences':{acc:'accSms',nav:'navSmsPrefs'}
+  };
+  // nested item → navigate to its screen (and make sure its parent category is open)
+  function closeAllAcc(){document.querySelectorAll('.sp-lhs .sp-acc').forEach(function(a){a.classList.remove('sp-acc--open');});}
+  function go(key){
+    var cfg=SCREENS[key]; if(!cfg)return;
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('is-active');});
+    var el=document.getElementById('screen-'+key); if(el)el.classList.add('is-active');
+    closeAllAcc();                                    // single-open
+    var acc=document.getElementById(cfg.acc); if(acc)acc.classList.add('sp-acc--open');
+    document.querySelectorAll('.sp-nav-item').forEach(function(n){n.classList.remove('sp-nav-item--selected');});
+    var nav=document.getElementById(cfg.nav); if(nav)nav.classList.add('sp-nav-item--selected');
+    closeAllMenus();
+  }
+  // parent category → expand/collapse ONLY (single-open: others close), never open a screen
+  function toggleCat(btn){
+    var acc=btn.closest('.sp-acc');
+    var willOpen=!acc.classList.contains('sp-acc--open');
+    closeAllAcc();
+    if(willOpen)acc.classList.add('sp-acc--open');
+    closeAllMenus();
+  }
+  function openScrim(id){document.getElementById(id).classList.add('is-open');}
+  function closeScrim(id){document.getElementById(id).classList.remove('is-open');}
+  var CARET='<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
+  function closeAllMenus(){
+    document.getElementById('appsMenu').classList.remove('is-open');
+    ['rowMenu','cellWsMenu','matchMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
+    document.querySelectorAll('.ap-actions-btn.is-pinned').forEach(function(b){b.classList.remove('is-pinned');});
+    document.querySelectorAll('.ws-switch__menu.is-open').forEach(function(m){m.classList.remove('is-open');});
+  }
+  function openRowMenu(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('rowMenu');var r=btn.getBoundingClientRect();closeAllMenus();btn.classList.add('is-pinned');m.style.left=(r.right-220)+'px';m.style.top=(r.bottom+4)+'px';m.classList.add('is-open');}
+  function rowDisconnect(){closeAllMenus(); toast('success','Account disconnected');}
+  function addAccount(){closeAllMenus(); /* opens Meta onboarding in a new tab — no in-product interaction */}
+  function toggleMenu(e){e.stopPropagation();var m=document.getElementById('appsMenu');var open=m.classList.contains('is-open');closeAllMenus();if(!open)m.classList.add('is-open');}
+  function toggleWsMenu(e){e.stopPropagation();var m=e.currentTarget.parentNode.querySelector('.ws-switch__menu');var open=m.classList.contains('is-open');closeAllMenus();if(!open)m.classList.add('is-open');}
+  function switchWs(name,assigned){
+    document.querySelectorAll('.ws-cur-name').forEach(function(n){n.textContent=name;});
+    document.getElementById('overviewAssigned').style.display=assigned?'':'none';
+    document.getElementById('overviewEmpty').style.display=assigned?'none':'';
+    document.querySelectorAll('.ws-switch__item').forEach(function(i){i.classList.toggle('ws-switch__item--sel',i.textContent.trim()===name);});
+    closeAllMenus();
+  }
+  // inline workspace picker in the Linked Workspace column (no modal)
+  function openCellWs(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('cellWsMenu');var wasOpen=m.classList.contains('is-open')&&window._wsTrigger===btn;var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._wsTrigger=btn;window._wsRow=btn.closest('tr');m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.classList.add('is-open');}
+  // only unlinked accounts get this picker; linking is one-way (no change once linked)
+  function pickCellWs(name){
+    var row=window._wsRow, tr=window._wsTrigger; closeAllMenus();
+    if(!row||!tr)return;
+    var td=tr.closest('td'); if(td)td.textContent=name;  // becomes plain text, no dropdown
+    row.classList.remove('is-unlinked');
+    unassignedExists=!!document.querySelector('.ap-table tr.is-unlinked');
+    toast('success','WABA linked to '+name);
+  }
+  function revealCount(btn){var v=document.createElement('span');v.className='ap-pg-total__val';v.textContent='300';btn.replaceWith(v);}
+  // Manage Keywords — match-type picker + add/remove rows
+  function openMatchMenu(btn){event.stopPropagation();var m=document.getElementById('matchMenu');var wasOpen=m.classList.contains('is-open')&&window._matchTrigger===btn;var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._matchTrigger=btn;m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  function pickMatch(val){var b=window._matchTrigger;closeAllMenus();if(b)b.innerHTML=val+'<svg aria-hidden="true"><use href="#zc-caret"/></svg>';}
+  function kwRowHTML(){
+    return '<input class="kw-input" type="text" value="" placeholder="Enter keyword" aria-label="Keyword">'
+      +'<span class="kw-arrow" aria-hidden="true"><svg><use href="#zc-down"/></svg></span>'
+      +'<button class="kw-match" onclick="openMatchMenu(this)">Contains word<svg aria-hidden="true"><use href="#zc-caret"/></svg></button>'
+      +'<button class="kw-del" aria-label="Remove keyword" onclick="deleteKwRow(this)"><svg aria-hidden="true"><use href="#zc-trash"/></svg></button>';
+  }
+  function ensurePlus(panel){
+    panel.querySelectorAll('.kw-add').forEach(function(b){b.remove();});
+    var rows=panel.querySelectorAll('.kw-edit-row');
+    var last=rows[rows.length-1];
+    if(last)last.insertAdjacentHTML('beforeend','<button class="kw-add" aria-label="Add keyword" onclick="addKwRow(this)"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button>');
+  }
+  function addKwRow(btn){
+    var panel=btn.closest('.kw-panel');
+    var row=document.createElement('div');row.className='kw-edit-row';row.innerHTML=kwRowHTML();
+    panel.appendChild(row);ensurePlus(panel);
+    var inp=row.querySelector('.kw-input');if(inp)inp.focus();
+  }
+  function deleteKwRow(btn){
+    var panel=btn.closest('.kw-panel');var rows=panel.querySelectorAll('.kw-edit-row');
+    if(rows.length<=1)return;  // keep at least one
+    btn.closest('.kw-edit-row').remove();ensurePlus(panel);
+  }
+  function openKeywords(){closeAllMenus();document.getElementById('kwDrawer').classList.add('is-open');requestAnimationFrame(positionTabInd);}
+  function closeKeywords(){document.getElementById('kwDrawer').classList.remove('is-open');}
+  function positionTabInd(){
+    var active=document.querySelector('.zc-drawer__tab.is-active');
+    var ind=document.getElementById('kwTabInd');
+    if(!active||!ind)return;
+    ind.style.width=active.offsetWidth+'px';
+    ind.style.transform='translateX('+active.offsetLeft+'px)';
+  }
+  function switchKwTab(which){
+    document.getElementById('kwTabIn').classList.toggle('is-active',which==='in');
+    document.getElementById('kwTabOut').classList.toggle('is-active',which==='out');
+    document.getElementById('kwPanelIn').style.display=which==='in'?'':'none';
+    document.getElementById('kwPanelOut').style.display=which==='out'?'':'none';
+    positionTabInd();
+    var shown=document.getElementById(which==='in'?'kwPanelIn':'kwPanelOut');
+    shown.style.opacity='0';
+    requestAnimationFrame(function(){shown.style.opacity='1';});
+  }
+  function toggleSwitch(btn){var on=btn.classList.toggle('is-on');btn.setAttribute('aria-checked',on?'true':'false');}
+  function updateSmsPreview(){
+    var p=document.getElementById('smsPrefixInput').value;
+    var s=document.getElementById('smsSuffixInput').value;
+    document.getElementById('smsPrefix').textContent=p?p+' ':'';
+    document.getElementById('smsSuffix').textContent=s?' '+s:'';
+  }
+  function toast(type,message){
+    var c=document.getElementById('toasts'),el=document.createElement('div');
+    el.className='zc-toast zc-toast--'+(type==='info'?'info':'success');
+    el.innerHTML='<div class="zc-toast__icon"><svg aria-hidden="true"><use href="#'+(type==='info'?'zc-info':'zc-check')+'"/></svg></div><span class="zc-toast__msg">'+message+'</span><button class="zc-toast__close" aria-label="Dismiss"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button>';
+    el.querySelector('.zc-toast__close').addEventListener('click',function(){el.remove();});
+    c.appendChild(el);setTimeout(function(){if(el.parentNode)el.remove();},6000);
+  }
+  document.querySelectorAll('.zc-scrim').forEach(function(s){s.addEventListener('click',function(e){if(e.target===s)s.classList.remove('is-open');});});
+  var kwd=document.getElementById('kwDrawer'); if(kwd)kwd.addEventListener('click',function(e){if(e.target===kwd)kwd.classList.remove('is-open');});
+  document.addEventListener('click',closeAllMenus);
+  // whole-row click opens that record (interactive cells — Link dropdown, ••• — stop propagation themselves)
+  ['.ap-table tbody','.sms-table tbody'].forEach(function(sel){
+    var tb=document.querySelector(sel); if(!tb)return;
+    tb.addEventListener('click',function(e){
+      if(e.target.closest('button,a,.ap-ws'))return;   // let interactive cells handle their own clicks
+      var tr=e.target.closest('tr'); if(!tr)return;
+      /* whole row is the click target — would open the record's detail screen (not built in this prototype) */
+    });
+  });
+</script>
+</body>
+</html>

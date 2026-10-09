@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="blue">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZC Settings Page — Pattern</title>
+<!--
+  ZC SETTINGS PAGE PATTERN — reference implementation.
+  Structure derived from Figma: Campaigns 3.0 revamp, node 55560:38866
+  "Whatsapp Settings - Existing Cust." Follow this for ANY settings page.
+  Three parts: (1) dark top bar 48px, (2) settings LHS 240px, (3) settings RHS.
+  RHS = page topbar (56px: title + actions + divider) then flat sections
+  separated by full-width 1px dividers (NO bordered cards).
+-->
+<style>
+/* ===== ZC tokens (subset of zc-tokens.css) ===== */
+:root, :root[data-accent="blue"]{
+  --accent-master:#0062eb;--accent-s10:#0054cc;--accent-s20:#0048b1;--accent-s40:#00317e;
+  --accent-s50:#002665;--accent-s60:#172138;--accent-s70:#001137;
+  --accent-t40:#86b2fa;--accent-t80:#dce9ff;--accent-t90:#ebf3ff;--accent-t100:#f4f8ff;--accent-t110:#fafcff;
+  --faded-t10:#728099;--faded-t40:#a8b1c1;--faded-t70:#d8dce3;--faded-s30:#3a4457;--faded-s50:#202d4a;
+}
+:root[data-accent="green"]{--accent-master:#0b8844;--accent-s10:#1e8e41;--accent-t40:#9ad1a2;--accent-t90:#eff8f0;--accent-t100:#f6fbf7;}
+:root[data-accent="orange"]{--accent-master:#e56e16;--accent-s10:#c86013;--accent-t40:#f4bf98;--accent-t90:#fdf4ee;--accent-t100:#fef9f6;}
+:root{
+  --text-primary:#202123;--text-secondary:#525354;--text-tertiary:#838485;--text-disabled:#b5b5b6;--text-on-solid:#fff;
+  --text-brand:var(--accent-master);--text-link:var(--accent-master);--text-link-hover:var(--accent-s10);
+  --text-success:#187b37;--text-warning:#7e600f;--text-error:#f03435;
+  --border-default:#cdcece;--border-subtle:#e7e7e7;--border-strong:#9c9c9d;
+  --border-focus:var(--accent-master);--border-brand:var(--accent-master);
+  --surface-default:#fff;--surface-sunken:#f2f2f3;--surface-hover:#f2f2f3;
+  --surface-brand:var(--accent-master);--surface-brand-subtle:var(--accent-t100);
+  --surface-selected:var(--accent-t90);--surface-inverse:#172138;--surface-frame-bg:#f4f8ff;
+  --surface-success-subtle:#eff8f0;--surface-warning-subtle:#fff7ec;--surface-error-subtle:#feefed;--surface-info-subtle:#f4f8ff;
+  --icon-subtle:#6a6b6c;--icon-default:#39393b;
+  --cta-primary-bg:var(--accent-master);--cta-primary-bg-hover:var(--accent-s10);--cta-primary-fg:#fff;
+  --cta-secondary-bg:#fff;--cta-secondary-bg-hover:#f2f2f3;--cta-secondary-border:#cdcece;--cta-secondary-border-active:#838485;--cta-secondary-fg:#202123;
+  --input-bg:#fff;--input-border:#cdcece;--input-placeholder:#9c9c9d;
+  --success-solid:#0b8844;--warning-solid:#ff9500;--error-solid:#f03435;--info-solid:var(--accent-master);--warning-bg:#fcf5e4;--tag-orange-fg:#e56e16;
+  --table-row-hover:#fafcff;--table-header-bg:#f7f7f7;--table-divider:#e7e7e7;
+  --nav-top-item-icon:var(--faded-t10);
+  --overlay-scrim:rgba(31,31,31,0.75);--focus-ring:rgba(0,98,235,0.25);
+  --shadow-m-box:0 0 16px rgba(15,18,23,0.12);--shadow-l-box:0 0 24px rgba(15,18,23,0.16);
+  --radius-xxs:4px;--radius-xs:6px;--radius-s:8px;--radius-m:10px;--radius-l:12px;--radius-full:9999px;
+  --font-family:"Zoho Puvi",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --zc-duration-fast:150ms;--zc-easing-standard:cubic-bezier(.4,0,.2,1);
+  /* settings top bar (aliases -> DS Navigation/Main Nav tokens, light) */
+  --st-bg:var(--accent-t100);--st-fg:var(--accent-s50);--st-search-bg:var(--accent-t90);
+  --st-stroke:var(--faded-t70);--st-placeholder:var(--faded-t40);--st-icon:var(--faded-t10);
+  --st-hover:var(--accent-t80);--st-create-bg:var(--accent-t90);--st-create-stroke:var(--faded-t10);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:var(--font-family);}
+body{background:var(--surface-frame-bg);color:var(--text-primary);}
+
+/* ========================================================================
+   1 · TOP BAR (DS Settings top bar — Navigation/Main Nav/bg, light)
+   ======================================================================== */
+.sp-shell{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.sp-topbar{height:48px;flex-shrink:0;display:flex;align-items:center;gap:16px;
+  padding:6px 16px;background:var(--st-bg);border-bottom:1px solid var(--border-subtle);}
+.sp-brand{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.sp-brand__logo{width:26px;height:25px;}
+.sp-brand__divider{width:1px;height:22px;background:var(--st-stroke);}
+.sp-brand__ws{display:flex;align-items:center;gap:8px;font:600 15px/1 var(--font-family);color:var(--st-fg);}
+.sp-brand__ws svg{width:12px;height:12px;color:var(--st-icon);}
+.sp-topbar__spacer{flex:1;}
+/* search bar (DS Settings: simple, no scope segment) */
+.sp-search{display:flex;align-items:center;gap:8px;width:460px;max-width:40vw;height:36px;padding:0 12px;
+  background:var(--st-search-bg);border:1px solid var(--st-stroke);border-radius:var(--radius-s);}
+.sp-search__icon{width:15px;height:15px;color:var(--st-icon);flex-shrink:0;}
+.sp-search__field{flex:1;font-size:13px;color:var(--st-placeholder);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp-topbar__actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sp-tbtn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:transparent;border-radius:var(--radius-s);cursor:pointer;position:relative;}
+.sp-tbtn:hover{background:var(--st-hover);}
+.sp-tbtn svg{width:16px;height:16px;color:var(--st-icon);}
+.sp-tbtn--create{background:var(--st-create-bg);border:1px solid var(--st-create-stroke);}
+.sp-badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;padding:0 4px;border-radius:var(--radius-s);background:var(--error-solid);display:flex;align-items:center;justify-content:center;}
+.sp-badge span{font:600 9px/1 var(--font-family);color:var(--text-on-solid);}
+.sp-avatar{width:30px;height:30px;border-radius:var(--radius-s);background:var(--accent-t80);display:flex;align-items:center;justify-content:center;color:var(--accent-s20);font:600 12px/1 var(--font-family);margin-left:2px;}
+
+/* ========================================================================
+   2 · SETTINGS LHS (240px) — the Brand Kit rail
+   ======================================================================== */
+.sp-body{flex:1;min-height:0;display:flex;background:var(--surface-frame-bg);}
+.sp-lhs{width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;padding:12px 8px;
+  background:var(--surface-default);border-right:1px solid var(--border-subtle);border-radius:10px 0 0 0;overflow-y:auto;}
+.sp-lhs__back{display:flex;align-items:center;gap:6px;padding:8px 12px;border:none;background:transparent;border-radius:var(--radius-s);font:500 14px/1.4 var(--font-family);color:var(--text-secondary);cursor:pointer;}
+.sp-lhs__back svg{width:16px;height:16px;}
+.sp-lhs__back:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
+.sp-acc__header{display:flex;align-items:center;width:100%;padding:11px 12px;gap:10px;border:none;background:transparent;border-radius:var(--radius-s);cursor:pointer;font:500 14px/1.4 var(--font-family);color:var(--text-secondary);}
+.sp-acc__header:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
+.sp-acc__header--active{color:var(--text-primary);}
+.sp-acc__icon{width:18px;height:18px;flex-shrink:0;}
+.sp-acc__label{flex:1;text-align:left;}
+.sp-acc__chev{width:12px;height:12px;flex-shrink:0;transition:transform var(--zc-duration-fast) ease;}
+.sp-acc--open .sp-acc__chev{transform:rotate(180deg);}
+.sp-acc__items{display:flex;flex-direction:column;}
+.sp-acc:not(.sp-acc--open) .sp-acc__items{display:none;}
+.sp-nav-item{display:block;padding:10px 12px 10px 40px;border-radius:var(--radius-s);font:400 14px/1.4 var(--font-family);color:var(--text-secondary);text-decoration:none;cursor:pointer;}
+.sp-nav-item:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
+.sp-nav-item--selected{background:var(--surface-selected);color:var(--text-brand);font-weight:500;}
+.sp-nav-item[hidden]{display:none;}
+
+/* ========================================================================
+   3 · SETTINGS RHS (content)
+   ======================================================================== */
+.sp-content{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surface-default);
+  border:none;border-radius:0;overflow:hidden;}
+/* page topbar: title (or tabs) + right actions + bottom divider */
+.sp-ptopbar{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;border-bottom:1px solid var(--border-subtle);}
+.sp-ptopbar__title{font:600 18px/1.3 var(--font-family);color:var(--text-primary);}
+.sp-ptopbar__actions{display:flex;align-items:center;gap:10px;}
+/* scroll area holds the sections */
+.sp-scroll{flex:1;min-height:0;overflow-y:auto;}
+/* section = flat block separated by full-width divider; no card */
+.sp-section{padding:24px 20px;border-bottom:1px solid var(--border-subtle);}
+.sp-section:last-child{border-bottom:none;}
+.sp-section__head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:36px;margin-bottom:16px;}
+.sp-section__title{font:600 15px/1.3 var(--font-family);color:var(--text-primary);}
+.sp-section__actions{display:flex;align-items:center;gap:10px;}
+
+/* field row (label over value), subtle vertical dividers between fields */
+.sp-fields{display:flex;align-items:stretch;}
+.sp-field{display:flex;flex-direction:column;gap:6px;padding:0 24px;}
+.sp-field:first-child{padding-left:0;}
+.sp-field + .sp-field{border-left:1px solid var(--border-subtle);}
+.sp-field__label{font:400 13px/1.2 var(--font-family);color:var(--text-tertiary);}
+.sp-field__value{font:500 15px/1.2 var(--font-family);color:var(--text-primary);}
+.sp-field__value.is-ok{color:var(--text-success);}
+
+/* buttons */
+.sp-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:var(--radius-s);border:none;cursor:pointer;white-space:nowrap;font:500 14px/20px var(--font-family);box-sizing:border-box;flex-shrink:0;transition:background var(--zc-duration-fast),border-color var(--zc-duration-fast),color var(--zc-duration-fast);}
+.sp-btn svg{width:14px;height:14px;}
+.sp-btn--primary{background-color:var(--cta-primary-bg);color:var(--cta-primary-fg);}
+.sp-btn--primary:hover{background-color:var(--cta-primary-bg-hover);}
+.sp-btn--secondary{background:var(--cta-secondary-bg);border:1px solid var(--border-brand);color:var(--text-link);}
+.sp-btn--secondary:hover{background:var(--cta-primary-bg);color:var(--cta-primary-fg);}
+.sp-btn--tertiary{background:var(--cta-secondary-bg);border:1px solid var(--cta-secondary-border);color:var(--cta-secondary-fg);}
+.sp-btn--tertiary:hover{background:var(--cta-secondary-bg-hover);border-color:var(--cta-secondary-border-active);}
+/* split button (primary action + dropdown) */
+.sp-split{display:inline-flex;align-items:stretch;flex-shrink:0;}
+.sp-split .sp-btn{border-top-right-radius:0;border-bottom-right-radius:0;}
+.sp-split__drop{display:flex;align-items:center;justify-content:center;width:32px;height:36px;border:none;background:var(--cta-primary-bg);color:var(--cta-primary-fg);border-left:1px solid var(--cta-primary-fg);border-radius:0 var(--radius-s) var(--radius-s) 0;cursor:pointer;}
+.sp-split__drop svg{width:14px;height:14px;}
+.sp-split__drop:hover{background:var(--cta-primary-bg-hover);}
+.sp-linkbtn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font:500 13px/1.3 var(--font-family);color:var(--text-link);}
+.sp-linkbtn svg{width:13px;height:13px;}
+.sp-linkbtn:hover{color:var(--text-link-hover);text-decoration:underline;}
+
+/* search input (on-light) */
+.sp-input-search{display:flex;align-items:center;gap:8px;width:200px;height:36px;padding:0 12px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-xs);}
+.sp-input-search svg{width:15px;height:15px;color:var(--icon-subtle);flex-shrink:0;}
+.sp-input-search input{flex:1;border:none;outline:none;background:transparent;font:400 14px/1 var(--font-family);color:var(--text-primary);}
+.sp-input-search input::placeholder{color:var(--input-placeholder);}
+
+/* flat table */
+.sp-table{width:100%;border-collapse:collapse;}
+.sp-table thead th{height:40px;padding:0 16px;background:var(--table-header-bg);text-align:left;
+  font:500 13px/1 var(--font-family);color:var(--text-secondary);white-space:nowrap;}
+.sp-table thead th:first-child{border-top-left-radius:var(--radius-s);border-bottom-left-radius:var(--radius-s);}
+.sp-table thead th:last-child{border-top-right-radius:var(--radius-s);border-bottom-right-radius:var(--radius-s);}
+.sp-th{display:inline-flex;align-items:center;gap:5px;}
+.sp-th svg{width:14px;height:14px;color:var(--icon-subtle);}
+.sp-table tbody td{height:68px;padding:0 16px;border-bottom:1px solid var(--table-divider);font:400 14px/1.4 var(--font-family);color:var(--text-primary);vertical-align:middle;}
+.sp-table tbody tr:hover td{background:var(--table-row-hover);}
+.sp-cell-name{display:flex;flex-direction:column;gap:3px;}
+.sp-cell-name__title{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
+.sp-cell-name__sub{font:400 12.5px/1.3 var(--font-family);color:var(--text-tertiary);}
+.sp-cell-name__sub.is-warn{color:var(--tag-orange-fg);}
+.sp-cell-phone{display:flex;flex-direction:column;gap:3px;}
+.sp-quality--high{color:var(--text-success);font-weight:500;}
+.sp-quality--low{color:var(--text-error);font-weight:500;}
+.sp-quality--unknown{color:var(--text-tertiary);}
+
+/* callout */
+.sp-callout{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-radius:var(--radius-xs);border-left:3px solid var(--info-solid);background:var(--surface-info-subtle);}
+.sp-callout svg{width:16px;height:16px;color:var(--info-solid);flex-shrink:0;margin-top:1px;}
+.sp-callout__t{font:500 14px/1.4 var(--font-family);color:var(--text-primary);}
+.sp-callout__b{font:400 14px/1.4 var(--font-family);color:var(--text-secondary);margin-top:3px;}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+
+<!-- icon sprite (subset of zc-icons.svg) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="zc-logo" viewBox="0 0 24 23" fill="currentColor"><path d="M23.968 15.074L21.6257 1.75587C21.4767 0.891817 20.8229 0.218851 19.9704 0.044378C19.1262 -0.130095 18.282 0.218851 17.802 0.933358C18.0254 0.634262 18.4393 0.55118 18.7538 0.758885C19.0766 0.974899 19.1676 1.40693 18.9607 1.73926L18.9524 1.74756C18.9524 1.74756 18.9524 1.73926 18.9607 1.73926C19.2007 1.36539 19.5814 1.40693 19.689 1.43185C19.7966 1.45678 20.1608 1.56478 20.2435 2.00512L22.5775 15.3232C22.6272 15.6057 22.503 15.8051 22.4203 15.9048C22.3375 16.0045 22.1637 16.154 21.8823 16.154H8.27577C7.88678 16.154 7.57227 16.4697 7.57227 16.8602C7.57227 17.2507 7.88678 17.5664 8.27577 17.5664H10.0883L8.80547 21.1223C8.70615 21.4048 8.4413 21.5876 8.14335 21.5876H7.57227C7.23294 21.5876 6.94326 21.3384 6.87705 21.006L4.41894 7.07313L15.3439 1.89711C15.6915 1.73095 15.8487 1.30723 15.6832 0.958283C15.5177 0.609337 15.0956 0.451481 14.748 0.617645L1.20767 7.03159C0.34692 7.4387 -0.133115 8.37753 0.0324139 9.31635L1.17457 15.8134C1.34837 16.827 2.22568 17.5664 3.25196 17.5664H4.84104L5.49488 21.247C5.67696 22.2606 6.54599 23 7.57227 23H8.14335C9.02893 23 9.83175 22.435 10.1297 21.6042L11.5864 17.5664H21.8906C22.5196 17.5664 23.1072 17.2922 23.5045 16.8104C23.91 16.3285 24.0755 15.6971 23.968 15.074ZM3.25196 16.154C2.91262 16.154 2.61467 15.9048 2.55674 15.5724L1.41458 9.07542C1.35665 8.7597 1.52218 8.4523 1.81185 8.31106L3.10298 7.70456L4.59275 16.154H3.25196Z" fill="#E42527"/><path d="M18.7455 0.758872C18.431 0.551166 18.0172 0.634249 17.7937 0.933345C17.7854 0.941653 17.7772 0.949961 17.7689 0.966578L12.2237 9.50743C12.025 9.80653 11.636 9.91454 11.3215 9.74837L8.07715 8.11165C7.72953 7.93718 7.30743 8.07842 7.13363 8.42736C6.95982 8.77631 7.10052 9.20003 7.44813 9.3745L10.6925 11.0112C10.9987 11.1608 11.3215 11.2355 11.6443 11.2355C12.3395 11.2355 13.0099 10.8949 13.4155 10.2718L18.9607 1.73924L18.969 1.73093C19.1676 1.40691 19.0766 0.974886 18.7455 0.758872Z" fill="#226DB4"/></symbol>
+<symbol id="zc-search" viewBox="0 0 16 16" fill="none"><path d="M14.89 14.64L11.2 10.94M12.47 6.73C12.47 9.9 9.9 12.47 6.73 12.47C3.57 12.47 1 9.9 1 6.73C1 3.57 3.57 1 6.73 1C9.9 1 12.47 3.57 12.47 6.73Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/></symbol>
+<symbol id="zc-plus" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.24C8.46 1.24 8.83 1.61 8.83 2.07V7.17H13.93C14.39 7.17 14.76 7.54 14.76 8C14.76 8.46 14.39 8.83 13.93 8.83H8.83V13.93C8.83 14.39 8.46 14.76 8 14.76C7.54 14.76 7.17 14.39 7.17 13.93V8.83H2.07C1.61 8.83 1.24 8.46 1.24 8C1.24 7.54 1.61 7.17 2.07 7.17H7.17V2.07C7.17 1.61 7.54 1.24 8 1.24Z" fill="currentColor"/></symbol>
+<symbol id="zc-bell" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.5C10.93 0.5 13.26 2.96 13.26 5.94V6.42C13.26 6.89 13.4 7.34 13.64 7.72L14.4 8.91C15.31 10.33 14.64 12.28 13.01 12.74C12.56 12.87 12.11 12.97 11.66 13.06C11.11 14.5 9.67 15.5 8 15.5C6.33 15.5 4.89 14.5 4.33 13.06C3.89 12.97 3.44 12.87 2.99 12.74C1.36 12.28 0.69 10.33 1.6 8.91L2.36 7.72C2.6 7.34 2.74 6.89 2.74 6.42V5.94C2.74 2.96 5.07 0.5 8 0.5ZM10.09 13.31C8.7 13.47 7.3 13.47 5.91 13.31C6.39 13.88 7.14 14.26 8 14.26C8.86 14.26 9.61 13.88 10.09 13.31ZM8 1.74C5.8 1.74 3.98 3.6 3.98 5.94V6.42C3.98 7.12 3.78 7.81 3.4 8.39L2.64 9.58C2.16 10.33 2.54 11.32 3.33 11.55C6.39 12.41 9.61 12.41 12.67 11.55C13.46 11.32 13.84 10.33 13.36 9.58L12.6 8.39C12.22 7.81 12.02 7.12 12.02 6.42V5.94C12.02 3.6 10.2 1.74 8 1.74Z" fill="currentColor"/></symbol>
+<symbol id="zc-settings" viewBox="0 0 18 17" fill="currentColor"><path d="M11.59 0C11.78 -0.01 11.95 0.05 12.06 0.1C12.19 0.16 12.34 0.25 12.48 0.33L13.89 1.14C14.04 1.23 14.19 1.31 14.3 1.39C14.42 1.48 14.58 1.61 14.67 1.83C14.77 2.06 14.74 2.3 14.71 2.44C14.69 2.6 14.64 2.79 14.58 3C14.25 4.29 15.06 5.67 16.34 6.02C16.55 6.08 16.74 6.13 16.89 6.18C17.02 6.23 17.24 6.32 17.39 6.53C17.53 6.71 17.57 6.91 17.58 7.06C17.6 7.2 17.6 7.37 17.6 7.54V9.15C17.6 9.32 17.6 9.49 17.58 9.63C17.57 9.77 17.53 9.98 17.39 10.16C17.24 10.36 17.02 10.46 16.89 10.5C16.74 10.56 16.55 10.61 16.34 10.67L16.34 10.67C15.06 11.02 14.25 12.39 14.58 13.68C14.64 13.89 14.69 14.09 14.71 14.25C14.74 14.39 14.77 14.62 14.67 14.86C14.58 15.07 14.42 15.21 14.3 15.29C14.19 15.38 14.04 15.46 13.9 15.55L12.48 16.36C12.34 16.44 12.19 16.53 12.07 16.58C11.93 16.64 11.74 16.71 11.51 16.68C11.25 16.65 11.07 16.5 10.96 16.41C10.84 16.31 10.71 16.17 10.56 16.02L10.37 15.85C9.4 15.05 7.94 15.11 7.04 16.02H7.04C6.89 16.17 6.76 16.31 6.64 16.41C6.53 16.5 6.34 16.64 6.09 16.68C5.86 16.71 5.67 16.64 5.53 16.58C5.4 16.53 5.26 16.44 5.12 16.36L3.7 15.55C3.56 15.46 3.41 15.38 3.29 15.29C3.18 15.21 3.02 15.07 2.93 14.86C2.83 14.62 2.86 14.39 2.89 14.25C2.91 14.09 2.96 13.89 3.02 13.68C3.35 12.39 2.54 11.02 1.25 10.67C1.05 10.61 0.86 10.56 0.71 10.5C0.58 10.46 0.36 10.36 0.21 10.16C0.06 9.98 0.03 9.77 0.01 9.63C0 9.49 4.95e-06 9.32 5.3e-06 9.15V7.54C4.87e-06 7.37 0 7.2 0.01 7.06C0.03 6.91 0.07 6.71 0.21 6.53L0.27 6.45C0.41 6.3 0.59 6.23 0.71 6.18C0.86 6.13 1.05 6.08 1.25 6.02C2.54 5.67 3.35 4.29 3.02 3C2.96 2.79 2.91 2.6 2.89 2.44C2.86 2.3 2.83 2.06 2.93 1.83L2.97 1.75C3.06 1.58 3.19 1.47 3.3 1.39C3.41 1.31 3.56 1.23 3.7 1.14L5.12 0.33C5.26 0.25 5.41 0.16 5.53 0.1C5.67 0.04 5.86 -0.02 6.09 0.01C6.34 0.04 6.53 0.19 6.64 0.28C6.76 0.38 6.89 0.52 7.04 0.67C8 1.64 9.6 1.64 10.56 0.67C10.71 0.52 10.84 0.38 10.96 0.28C11.07 0.19 11.25 0.04 11.5 0.01L11.59 0ZM11.61 1.31L11.41 1.51C9.98 2.96 7.62 2.96 6.19 1.51C6.07 1.39 5.98 1.31 5.92 1.25C5.92 1.25 5.91 1.26 5.91 1.26C5.86 1.29 5.79 1.32 5.72 1.37L4.3 2.18C4.22 2.23 4.16 2.26 4.11 2.3C4.1 2.3 4.09 2.31 4.08 2.31C4.1 2.4 4.13 2.53 4.18 2.71C4.68 4.64 3.48 6.66 1.57 7.18C1.4 7.23 1.29 7.26 1.2 7.28C1.2 7.29 1.2 7.3 1.2 7.31C1.2 7.38 1.2 7.45 1.2 7.54V9.15C1.2 9.24 1.2 9.31 1.2 9.37C1.2 9.38 1.2 9.39 1.2 9.4C1.29 9.43 1.4 9.46 1.57 9.51C3.48 10.03 4.67 12.05 4.18 13.98C4.13 14.16 4.1 14.29 4.08 14.38C4.09 14.38 4.1 14.39 4.11 14.39C4.16 14.42 4.22 14.46 4.3 14.51L5.72 15.32C5.79 15.36 5.86 15.4 5.91 15.43C5.91 15.43 5.92 15.43 5.92 15.44C5.98 15.38 6.07 15.29 6.18 15.18C7.57 13.77 9.83 13.73 11.28 15.04L11.41 15.18L11.61 15.37C11.64 15.4 11.66 15.42 11.68 15.44C11.68 15.43 11.69 15.43 11.69 15.43C11.74 15.4 11.81 15.36 11.88 15.32L13.3 14.51L13.49 14.39C13.5 14.39 13.51 14.38 13.51 14.38C13.5 14.29 13.47 14.16 13.42 13.98C12.92 12.05 14.12 10.03 16.03 9.51C16.2 9.46 16.31 9.43 16.39 9.4C16.39 9.39 16.4 9.38 16.4 9.37C16.4 9.31 16.4 9.24 16.4 9.15V7.54C16.4 7.45 16.4 7.38 16.4 7.31C16.4 7.3 16.39 7.29 16.39 7.28C16.31 7.26 16.2 7.23 16.03 7.18C14.12 6.66 12.92 4.64 13.42 2.71C13.46 2.53 13.49 2.4 13.51 2.31C13.51 2.31 13.5 2.3 13.49 2.3C13.44 2.26 13.37 2.23 13.3 2.18L11.88 1.37H11.88C11.8 1.32 11.74 1.29 11.69 1.26C11.69 1.26 11.68 1.25 11.68 1.25C11.66 1.27 11.63 1.29 11.61 1.31ZM8.81 5.19C10.65 5.19 12.15 6.69 12.15 8.53C12.15 10.37 10.65 11.86 8.81 11.86C6.97 11.86 5.48 10.37 5.48 8.53C5.48 6.69 6.97 5.19 8.81 5.19ZM8.81 6.39C7.64 6.39 6.68 7.35 6.68 8.53C6.68 9.7 7.64 10.66 8.81 10.66C9.99 10.66 10.95 9.7 10.95 8.53C10.95 7.35 9.99 6.39 8.81 6.39Z"/></symbol>
+<symbol id="zc-caret" viewBox="0 0 16 16" fill="currentColor"><path d="M12.8 5.18C13.07 5.45 13.07 5.87 12.8 6.14L8.48 10.46C8.21 10.73 7.78 10.73 7.52 10.46L3.2 6.14C2.93 5.87 2.93 5.45 3.2 5.18C3.46 4.91 3.89 4.91 4.16 5.18L7.83 8.85L8.17 8.85L11.84 5.18C12.11 4.91 12.53 4.91 12.8 5.18Z" fill="currentColor"/></symbol>
+<symbol id="zc-arrow-back" viewBox="0 0 16 16" fill="currentColor"><path d="M5.8 3.9C6 3.7 6.3 3.7 6.5 3.9C6.8 4.1 6.8 4.5 6.5 4.7L3.8 7.4H9.9C10.6 7.4 11.6 7.7 12.5 8.3C13.4 8.9 14.1 10 14.1 11.7C14.1 12 13.9 12.3 13.6 12.3C13.2 12.3 13 12 13 11.7C13 10.4 12.5 9.6 11.8 9.2C11.2 8.7 10.4 8.6 9.9 8.6H3.8L6.5 11.3C6.8 11.5 6.8 11.9 6.5 12.1C6.3 12.3 6 12.3 5.8 12.1L2.1 8.4C1.9 8.3 1.9 8.1 1.9 8C1.9 7.9 1.9 7.7 2.1 7.6L5.8 3.9Z"/></symbol>
+<symbol id="zc-consent-and-privacy" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.49C8.26 0.49 8.52 0.57 8.77 0.67C9.03 0.77 9.35 0.92 9.74 1.1C10.31 1.36 11.02 1.64 11.83 1.88C12.43 2.05 12.93 2.2 13.3 2.34C13.67 2.49 14.02 2.68 14.26 3C14.49 3.31 14.57 3.67 14.61 4.05C14.65 4.41 14.65 4.88 14.65 5.43V7.44C14.65 9.57 13.71 11.26 12.58 12.52C11.45 13.77 10.11 14.63 9.23 15.11C8.84 15.32 8.51 15.51 8 15.51C7.49 15.51 7.16 15.32 6.77 15.11C5.89 14.63 4.55 13.77 3.42 12.52C2.29 11.26 1.35 9.57 1.35 7.44V5.43C1.35 4.88 1.35 4.41 1.39 4.05C1.43 3.67 1.51 3.31 1.74 3C1.98 2.68 2.33 2.49 2.7 2.34C3.07 2.2 3.57 2.05 4.17 1.88C4.98 1.64 5.69 1.36 6.26 1.1C6.65 0.92 6.97 0.77 7.23 0.67C7.48 0.57 7.74 0.49 8 0.49ZM8 1.69C7.97 1.69 7.89 1.7 7.67 1.79C7.45 1.87 7.17 2 6.76 2.19C6.14 2.47 5.38 2.77 4.51 3.03C3.88 3.21 3.45 3.34 3.15 3.46C2.84 3.58 2.74 3.67 2.71 3.71C2.66 3.77 2.61 3.89 2.58 4.17C2.55 4.46 2.55 4.85 2.55 5.43V7.44C2.55 9.19 3.32 10.61 4.31 11.72C5.31 12.83 6.52 13.61 7.34 14.05C7.77 14.28 7.84 14.31 8 14.31C8.16 14.31 8.23 14.28 8.66 14.05C9.48 13.61 10.69 12.83 11.69 11.72C12.68 10.61 13.45 9.19 13.45 7.44V5.43C13.45 4.85 13.45 4.46 13.42 4.17C13.39 3.89 13.34 3.77 13.29 3.71C13.26 3.67 13.16 3.58 12.85 3.46C12.55 3.34 12.12 3.21 11.49 3.03C10.62 2.77 9.86 2.47 9.24 2.19C8.83 2 8.55 1.87 8.33 1.79C8.11 1.7 8.02 1.69 8 1.69ZM9.96 5.86C10.2 5.63 10.58 5.63 10.81 5.86C11.05 6.1 11.05 6.48 10.81 6.71L7.89 9.63C7.78 9.74 7.63 9.81 7.47 9.81C7.31 9.81 7.16 9.74 7.05 9.63L5.63 8.21C5.39 7.98 5.39 7.6 5.63 7.37C5.86 7.13 6.24 7.13 6.48 7.37L7.47 8.36L9.96 5.86Z"/></symbol>
+<symbol id="zc-customization" viewBox="0 0 16 17" fill="currentColor"><path d="M8.04 15.8C9.73 15.8 11.06 15.8 12.1 15.66C13.1 15.53 13.91 15.26 14.56 14.67L14.69 14.55L14.81 14.42C15.4 13.77 15.67 12.96 15.8 11.96C15.94 10.92 15.94 9.59 15.94 7.9C15.94 6.21 15.94 4.88 15.8 3.84C15.66 2.78 15.36 1.92 14.69 1.25C14.02 0.58 13.16 0.28 12.1 0.14C11.06 0 9.73 0 8.04 0C6.35 0 5.02 0 3.98 0.14C2.92 0.28 2.06 0.58 1.39 1.25C0.72 1.92 0.42 2.78 0.28 3.84C0.14 4.88 0.14 6.21 0.14 7.9C0.14 9.59 0.14 10.92 0.28 11.96C0.42 13.02 0.72 13.88 1.39 14.55C2.06 15.22 2.92 15.52 3.98 15.66C5.02 15.8 6.35 15.8 8.04 15.8ZM8.04 14.5C6.31 14.5 5.08 14.5 4.15 14.37C3.23 14.25 2.7 14.02 2.31 13.63C1.92 13.24 1.69 12.71 1.57 11.79C1.44 10.86 1.44 9.63 1.44 7.9C1.44 6.17 1.44 4.94 1.57 4.01C1.69 3.1 1.92 2.56 2.31 2.17C2.7 1.78 3.23 1.55 4.15 1.43C5.08 1.3 6.31 1.3 8.04 1.3C9.77 1.3 11 1.3 11.93 1.43C12.85 1.55 13.38 1.78 13.77 2.17C14.16 2.56 14.39 3.1 14.51 4.01C14.64 4.94 14.64 6.17 14.64 7.9C14.64 9.63 14.64 10.86 14.51 11.79C14.39 12.71 14.16 13.24 13.77 13.63C13.38 14.02 12.85 14.25 11.93 14.37C11 14.5 9.77 14.5 8.04 14.5ZM10.71 7.02C11.7 7.02 12.5 6.22 12.5 5.23C12.5 4.24 11.7 3.43 10.71 3.43C9.95 3.43 9.3 3.91 9.04 4.58H4.22C3.86 4.58 3.57 4.87 3.57 5.23C3.57 5.59 3.86 5.88 4.22 5.88H9.04C9.3 6.55 9.95 7.02 10.71 7.02ZM10.71 5.72C10.44 5.72 10.22 5.5 10.22 5.23C10.22 4.96 10.44 4.73 10.71 4.73C10.98 4.73 11.2 4.96 11.21 5.23C11.2 5.5 10.98 5.72 10.71 5.72ZM5.37 12.37C6.13 12.37 6.78 11.89 7.04 11.22H11.86C12.22 11.22 12.51 10.93 12.51 10.57C12.51 10.21 12.22 9.92 11.86 9.92H7.04C6.78 9.25 6.13 8.78 5.37 8.78C4.38 8.78 3.57 9.58 3.57 10.57C3.57 11.56 4.38 12.37 5.37 12.37ZM5.37 11.07C5.1 11.07 4.87 10.85 4.87 10.57C4.87 10.3 5.1 10.08 5.37 10.08C5.64 10.08 5.86 10.3 5.86 10.57C5.86 10.85 5.64 11.07 5.37 11.07Z"/></symbol>
+<symbol id="zc-settings-email" viewBox="0 0 16 16" fill="currentColor"><path d="M5.98 1.55C7.33 1.51 8.67 1.51 10.02 1.55C11.09 1.57 11.96 1.59 12.66 1.71C13.38 1.84 13.98 2.08 14.48 2.59V2.59C14.98 3.09 15.23 3.68 15.35 4.39C15.47 5.08 15.48 5.92 15.51 6.97L15.52 8C15.52 8.34 15.51 8.69 15.51 9.03C15.48 10.08 15.47 10.92 15.35 11.61C15.23 12.32 14.98 12.91 14.48 13.41C13.98 13.92 13.38 14.16 12.66 14.28C11.96 14.41 11.09 14.43 10.02 14.45C8.67 14.49 7.33 14.49 5.98 14.45C4.91 14.43 4.04 14.41 3.34 14.28C2.62 14.16 2.02 13.92 1.52 13.41C1.02 12.91 0.78 12.32 0.65 11.61C0.53 10.92 0.52 10.07 0.5 9.03C0.48 8.34 0.48 7.66 0.5 6.97C0.52 5.92 0.53 5.08 0.65 4.39C0.78 3.68 1.02 3.09 1.52 2.59C2.02 2.08 2.62 1.84 3.34 1.71C4.04 1.59 4.91 1.57 5.98 1.55ZM10.43 7.08C9.54 7.59 8.79 7.91 8 7.91C7.21 7.91 6.47 7.59 5.57 7.08L1.79 4.94C1.73 5.46 1.71 6.12 1.69 6.99C1.68 7.66 1.68 8.33 1.69 9.01C1.72 10.09 1.74 10.83 1.84 11.4C1.93 11.95 2.09 12.28 2.37 12.56C2.65 12.84 2.99 13.01 3.55 13.1C4.14 13.21 4.9 13.23 6.01 13.25C7.34 13.29 8.66 13.29 9.99 13.25C11.1 13.23 11.86 13.21 12.45 13.1C13.01 13.01 13.35 12.84 13.63 12.56C13.91 12.28 14.07 11.95 14.17 11.4C14.27 10.83 14.28 10.09 14.31 9.01L14.32 8C14.32 7.66 14.31 7.33 14.31 6.99C14.29 6.11 14.27 5.46 14.21 4.94L10.43 7.08ZM9.99 2.75C8.66 2.71 7.34 2.71 6.01 2.75C4.9 2.77 4.14 2.79 3.55 2.9C2.99 2.99 2.65 3.16 2.37 3.44C2.27 3.53 2.19 3.64 2.12 3.75L6.16 6.04C7.03 6.53 7.54 6.71 8 6.71C8.46 6.71 8.97 6.53 9.84 6.04L13.88 3.75C13.81 3.64 13.73 3.53 13.63 3.44C13.35 3.16 13.01 2.99 12.45 2.9C11.86 2.79 11.1 2.77 9.99 2.75Z"/></symbol>
+<symbol id="zc-settings-whatsapp" viewBox="0 0 16 16" fill="currentColor"><path d="M13.31 2.68C12.62 1.99 11.8 1.44 10.89 1.06C9.99 0.69 9.01 0.5 8.03 0.5C3.91 0.5 0.56 3.84 0.56 7.93C0.56 9.25 0.91 10.52 1.56 11.65L0.5 15.5L4.46 14.47C5.55 15.06 6.78 15.37 8.03 15.37C12.15 15.37 15.5 12.04 15.5 7.94C15.5 5.95 14.72 4.09 13.31 2.68ZM8.03 14.11C6.91 14.11 5.82 13.81 4.86 13.25L4.64 13.12L2.29 13.73L2.91 11.45L2.76 11.22C2.14 10.23 1.81 9.09 1.81 7.93C1.81 4.53 4.6 1.75 8.02 1.75C9.68 1.75 11.24 2.4 12.41 3.57C12.99 4.14 13.45 4.82 13.76 5.57C14.07 6.32 14.23 7.13 14.23 7.94C14.24 11.35 11.45 14.11 8.03 14.11ZM11.44 9.49C11.25 9.4 10.33 8.95 10.16 8.89C9.99 8.83 9.87 8.8 9.74 8.98C9.61 9.16 9.26 9.58 9.15 9.7C9.05 9.83 8.93 9.85 8.75 9.75C8.56 9.66 7.95 9.46 7.25 8.83C6.69 8.33 6.32 7.72 6.21 7.54C6.1 7.35 6.19 7.25 6.29 7.15C6.37 7.07 6.48 6.94 6.57 6.83C6.66 6.73 6.7 6.64 6.76 6.52C6.82 6.4 6.79 6.29 6.74 6.2C6.7 6.11 6.32 5.2 6.17 4.82C6.02 4.46 5.86 4.51 5.75 4.5H5.38C5.26 4.5 5.06 4.54 4.89 4.73C4.72 4.92 4.24 5.37 4.24 6.28C4.24 7.2 4.91 8.08 5 8.2C5.09 8.33 6.32 10.21 8.19 11.01C8.63 11.2 8.98 11.32 9.25 11.4C9.7 11.54 10.1 11.52 10.43 11.47C10.79 11.42 11.54 11.02 11.69 10.59C11.84 10.15 11.84 9.79 11.79 9.7C11.74 9.62 11.63 9.58 11.44 9.49Z"/></symbol>
+<symbol id="zc-settings-sms" viewBox="0 0 16 16" fill="none"><path d="M3.14 13.66L4.3 12.74L4.31 12.73C4.55 12.54 4.67 12.44 4.81 12.37C4.93 12.31 5.06 12.26 5.19 12.24C5.34 12.21 5.5 12.21 5.82 12.21H12.41C13.25 12.21 13.68 12.21 14 12.04C14.29 11.89 14.52 11.66 14.67 11.38C14.83 11.05 14.83 10.63 14.83 9.78V4.01C14.83 3.16 14.83 2.73 14.67 2.41C14.52 2.12 14.29 1.89 14 1.74C13.68 1.58 13.25 1.58 12.4 1.58H3.6C2.75 1.58 2.32 1.58 2 1.74C1.71 1.89 1.48 2.12 1.33 2.41C1.17 2.73 1.17 3.16 1.17 4.01V12.72C1.17 13.52 1.17 13.93 1.33 14.14C1.48 14.32 1.7 14.42 1.93 14.42C2.19 14.42 2.51 14.17 3.14 13.66Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="zc-settings-integrations" viewBox="0 0 16 16" fill="currentColor"><path d="M6.51 0.5C6.86 0.5 7.2 0.57 7.52 0.7C7.84 0.83 8.13 1.03 8.37 1.27C8.62 1.51 8.81 1.8 8.94 2.12C9.08 2.44 9.14 2.79 9.14 3.13V3.16H9.5C9.91 3.16 10.25 3.16 10.53 3.18C10.81 3.21 11.08 3.26 11.34 3.39C11.73 3.59 12.05 3.91 12.25 4.3C12.38 4.56 12.43 4.83 12.46 5.11C12.48 5.39 12.48 5.73 12.48 6.14V6.47C13.17 6.48 13.83 6.76 14.32 7.26C14.8 7.75 15.08 8.42 15.07 9.11C15.07 9.8 14.8 10.46 14.32 10.96C13.83 11.45 13.17 11.73 12.48 11.74V12.13C12.48 12.54 12.48 12.88 12.46 13.16C12.43 13.45 12.38 13.72 12.25 13.97C12.05 14.37 11.73 14.68 11.34 14.89C11.08 15.02 10.81 15.07 10.53 15.09C10.25 15.11 9.91 15.11 9.5 15.11H3.48C3.07 15.11 2.73 15.11 2.45 15.09C2.17 15.07 1.9 15.02 1.64 14.89C1.25 14.68 0.93 14.37 0.73 13.97C0.6 13.72 0.55 13.45 0.52 13.16C0.5 12.88 0.5 12.54 0.5 12.13V11.14C0.5 10.82 0.77 10.55 1.1 10.55H1.72C2.1 10.55 2.47 10.39 2.74 10.12C3.01 9.85 3.16 9.48 3.16 9.1C3.16 8.31 2.52 7.66 1.72 7.66H1.09C0.94 7.66 0.79 7.6 0.67 7.48C0.56 7.37 0.5 7.22 0.5 7.06V6.14C0.5 5.73 0.5 5.39 0.52 5.11C0.55 4.83 0.6 4.56 0.73 4.3C0.93 3.91 1.25 3.59 1.64 3.39C1.9 3.26 2.17 3.21 2.45 3.18C2.73 3.16 3.07 3.16 3.48 3.16H3.88V3.13C3.88 2.43 4.16 1.76 4.65 1.27C5.14 0.78 5.81 0.5 6.51 0.5ZM6.51 1.69C5.71 1.69 5.07 2.34 5.07 3.13V3.76C5.07 3.92 5.01 4.07 4.9 4.18C4.79 4.29 4.63 4.35 4.48 4.35H3.48C3.05 4.35 2.77 4.35 2.55 4.37C2.34 4.39 2.24 4.42 2.18 4.45C2.01 4.54 1.87 4.67 1.79 4.84C1.76 4.9 1.73 5 1.71 5.21C1.69 5.43 1.69 5.71 1.69 6.14V6.47H1.72C2.07 6.47 2.41 6.54 2.73 6.67C3.05 6.8 3.34 6.99 3.58 7.24C3.83 7.48 4.02 7.77 4.15 8.09C4.28 8.41 4.35 8.75 4.35 9.1C4.35 9.8 4.08 10.47 3.58 10.96C3.09 11.46 2.42 11.74 1.72 11.74H1.69V12.13C1.69 12.56 1.69 12.85 1.71 13.06C1.73 13.27 1.76 13.37 1.79 13.43C1.87 13.6 2.01 13.74 2.18 13.82C2.24 13.85 2.34 13.89 2.55 13.9C2.77 13.92 3.05 13.92 3.48 13.92H9.5C9.93 13.92 10.21 13.92 10.43 13.9C10.64 13.89 10.74 13.85 10.8 13.82C10.97 13.74 11.1 13.6 11.19 13.43C11.22 13.37 11.25 13.27 11.27 13.06C11.29 12.85 11.29 12.56 11.29 12.13V11.14C11.29 10.82 11.55 10.55 11.88 10.55H12.44C13.24 10.55 13.88 9.9 13.88 9.11C13.88 8.31 13.23 7.66 12.44 7.66H11.88C11.72 7.66 11.57 7.6 11.46 7.48C11.35 7.37 11.29 7.22 11.29 7.06V6.14C11.29 5.71 11.29 5.43 11.27 5.21C11.25 5 11.22 4.9 11.19 4.84C11.1 4.67 10.97 4.54 10.8 4.45C10.74 4.42 10.64 4.39 10.43 4.37C10.21 4.35 9.93 4.35 9.5 4.35H8.55C8.47 4.35 8.39 4.34 8.32 4.31C8.25 4.28 8.18 4.23 8.13 4.18C8.07 4.12 8.03 4.06 8 3.98C7.97 3.91 7.95 3.84 7.95 3.76V3.13C7.95 2.33 7.31 1.69 6.51 1.69Z"/></symbol>
+<symbol id="zc-whatsapp" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.1C8.2 0.1 8.4 0.1 8.6 0.2C12.6 0.4 15.9 3.8 15.9 8C15.9 12.2 12.6 15.6 8.4 15.9H8C6.7 15.9 5.4 15.5 4.3 14.9L4.3 14.9C4.2 14.9 4.2 14.9 4.2 14.9L2 15.5L2 15.5L1 15.7C0.8 15.8 0.6 15.7 0.4 15.5C0.3 15.4 0.2 15.2 0.3 15L1.1 11.8C0.5 10.7 0.1 9.4 0.1 8C0.1 3.7 3.7 0.1 8 0.1ZM8 1.3C4.3 1.3 1.3 4.3 1.3 8C1.3 9.2 1.7 10.4 2.3 11.4C2.4 11.6 2.4 11.7 2.4 11.9L1.7 14.3L4.1 13.6L4.2 13.6C4.3 13.6 4.5 13.6 4.6 13.7C4.6 13.7 4.7 13.8 4.7 13.8C4.8 13.8 4.8 13.8 4.9 13.9H4.8C5.8 14.4 6.9 14.7 8 14.7H8.3C11.9 14.5 14.7 11.6 14.7 8C14.7 4.5 11.9 1.6 8.5 1.4C8.5 1.4 8.4 1.4 8.4 1.4C8.3 1.3 8.2 1.3 8 1.3ZM5.3 4.5C5.4 4.5 5.6 4.4 5.7 4.8C5.9 5.2 6.3 6.2 6.4 6.3C6.4 6.4 6.4 6.5 6.4 6.7C6.3 6.8 6.3 6.9 6.2 7C6.1 7.1 6 7.3 5.9 7.4C5.8 7.5 5.6 7.6 5.8 7.8C5.9 8 6.3 8.7 6.9 9.2C7.7 9.9 8.3 10.1 8.5 10.2C8.7 10.3 8.8 10.3 9 10.1C9.1 10 9.5 9.6 9.6 9.4C9.7 9.1 9.9 9.2 10.1 9.3C10.2 9.3 11.2 9.8 11.4 9.9L11.4 9.9C11.6 10 11.8 10 11.8 10.1C11.9 10.2 11.9 10.6 11.7 11.1C11.5 11.6 10.7 12 10.3 12.1C10 12.1 9.6 12.1 9.1 12C8.8 11.9 8.4 11.8 7.9 11.5C5.9 10.7 4.6 8.6 4.5 8.5C4.4 8.4 3.6 7.4 3.6 6.4C3.6 5.4 4.1 4.9 4.3 4.7C4.5 4.5 4.7 4.5 4.9 4.5H5.3Z"/></symbol>
+<symbol id="zc-info" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0.09C12.37 0.09 15.91 3.63 15.91 8C15.91 12.37 12.37 15.91 8 15.91C3.63 15.91 0.09 12.37 0.09 8C0.09 3.63 3.63 0.09 8 0.09ZM8 1.28C4.29 1.28 1.28 4.29 1.28 8C1.28 11.71 4.29 14.71 8 14.71C11.71 14.71 14.71 11.71 14.71 8C14.71 4.29 11.71 1.28 8 1.28ZM8 7.4C8.33 7.4 8.6 7.67 8.6 8V10.93C8.6 11.26 8.33 11.52 8 11.52C7.67 11.52 7.4 11.26 7.4 10.93V8C7.4 7.67 7.67 7.4 8 7.4ZM8 4.47C8.43 4.47 8.78 4.82 8.78 5.26C8.78 5.69 8.43 6.04 8 6.04C7.57 6.04 7.22 5.69 7.22 5.26C7.22 4.82 7.57 4.47 8 4.47Z" fill="currentColor"/></symbol>
+<symbol id="zc-refresh" viewBox="0 0 16 16" fill="currentColor"><path d="M8.17 2C11.39 2 14 4.69 14 8C14 11.31 11.39 14 8.17 14C5.67 14 3.53 12.37 2.71 10.09C2.67 10.01 2.68 9.91 2.72 9.82C2.75 9.74 2.82 9.67 2.91 9.64C3.09 9.57 3.28 9.66 3.35 9.85C4.08 11.86 5.96 13.29 8.17 13.29C11.01 13.29 13.31 10.92 13.31 8C13.31 5.08 11.01 2.71 8.17 2.71C6.13 2.71 4.37 3.93 3.54 5.7L5.79 4.85C5.97 4.78 6.16 4.87 6.23 5.05C6.26 5.14 6.26 5.24 6.22 5.32C6.18 5.41 6.11 5.47 6.02 5.51L3.01 6.65C2.96 6.67 2.91 6.67 2.86 6.67C2.81 6.67 2.76 6.65 2.72 6.62C2.68 6.6 2.64 6.56 2.61 6.52C2.58 6.48 2.56 6.43 2.55 6.38L2.01 3.12C1.99 3.03 2.01 2.93 2.06 2.86C2.11 2.78 2.19 2.73 2.28 2.71C2.33 2.7 2.38 2.71 2.42 2.72C2.46 2.73 2.51 2.74 2.54 2.77C2.58 2.8 2.61 2.83 2.63 2.87C2.66 2.91 2.67 2.95 2.68 3L3.04 5.15C4.03 3.27 5.96 2 8.17 2Z" fill="currentColor"/></symbol>
+<symbol id="zc-check" viewBox="0 0 16 16" fill="currentColor"><path d="M11.91 4.03C12.17 3.71 12.64 3.65 12.97 3.91C13.29 4.17 13.35 4.64 13.09 4.97L7.34 12.22C7.21 12.38 7.01 12.49 6.79 12.5C6.58 12.51 6.37 12.43 6.22 12.28L2.97 9.03C2.68 8.74 2.68 8.26 2.97 7.97C3.26 7.68 3.74 7.68 4.03 7.97L6.68 10.62L11.91 4.03Z" fill="currentColor"/></symbol>
+<symbol id="zc-alert-triangle" viewBox="0 0 16 16" fill="currentColor"><path d="M15.77 12.49L9.53 1.86C9.37 1.59 9.15 1.38 8.88 1.23C8.61 1.08 8.31 1 8 1C7.69 1 7.39 1.08 7.12 1.23C6.85 1.38 6.63 1.59 6.48 1.86L0.23 12.49C0.08 12.74 0 13.02 0 13.32C0 13.61 0.08 13.89 0.23 14.15C0.38 14.41 0.61 14.63 0.87 14.78C1.14 14.93 1.45 15 1.75 15H14.25C14.55 15 14.86 14.93 15.13 14.78C15.39 14.63 15.62 14.41 15.77 14.15C15.92 13.89 16 13.61 16 13.32C16 13.02 15.92 12.74 15.77 12.49ZM7.43 6.6C7.43 6.45 7.49 6.31 7.6 6.2C7.7 6.1 7.85 6.04 8 6.04C8.15 6.04 8.3 6.1 8.4 6.2C8.51 6.31 8.57 6.45 8.57 6.6V9.4C8.57 9.55 8.51 9.69 8.4 9.8C8.3 9.9 8.15 9.96 8 9.96C7.85 9.96 7.7 9.9 7.6 9.8C7.49 9.69 7.43 9.55 7.43 9.4V6.6ZM8 12.76C7.83 12.76 7.67 12.71 7.52 12.62C7.38 12.53 7.27 12.39 7.21 12.24C7.14 12.09 7.13 11.92 7.16 11.76C7.19 11.59 7.27 11.44 7.39 11.33C7.51 11.21 7.67 11.13 7.83 11.1C8 11.06 8.17 11.08 8.33 11.14C8.48 11.21 8.62 11.32 8.71 11.45C8.81 11.59 8.86 11.75 8.86 11.92C8.86 12.14 8.77 12.36 8.61 12.51C8.45 12.67 8.23 12.76 8 12.76Z" fill="currentColor"/></symbol>
+<symbol id="zc-alert-circle" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.1C11.81 1.1 14.9 4.19 14.9 8C14.9 11.81 11.81 14.9 8 14.9C4.19 14.9 1.1 11.81 1.1 8C1.1 4.19 4.19 1.1 8 1.1ZM8 2.3C4.85 2.3 2.3 4.85 2.3 8C2.3 11.15 4.85 13.7 8 13.7C11.15 13.7 13.7 11.15 13.7 8C13.7 4.85 11.15 2.3 8 2.3ZM8 10.6C8.33 10.6 8.6 10.87 8.6 11.2V11.3C8.6 11.63 8.33 11.9 8 11.9C7.67 11.9 7.4 11.63 7.4 11.3V11.2C7.4 10.87 7.67 10.6 8 10.6ZM8 4C8.33 4 8.6 4.27 8.6 4.6V8.7C8.6 9.03 8.33 9.3 8 9.3C7.67 9.3 7.4 9.03 7.4 8.7V4.6C7.4 4.27 7.67 4 8 4Z" fill="currentColor"/></symbol>
+<symbol id="zc-link" viewBox="0 0 16 16" fill="currentColor"><path d="M7.25 5.58C8.09 5.58 8.89 5.91 9.49 6.5C9.77 6.77 9.77 7.21 9.5 7.49C9.23 7.77 8.79 7.77 8.51 7.5C8.17 7.17 7.72 6.99 7.25 6.99C6.78 6.99 6.33 7.17 5.99 7.5L4.04 9.45C3.79 9.79 3.67 10.21 3.7 10.63C3.73 11.06 3.92 11.47 4.23 11.77C4.53 12.08 4.94 12.26 5.37 12.29C5.79 12.32 6.21 12.2 6.55 11.96L7.3 11.2C7.58 10.93 8.02 10.93 8.29 11.2C8.57 11.48 8.57 11.92 8.29 12.19L7.49 12.99C7.47 13.02 7.45 13.04 7.42 13.06C6.8 13.52 6.04 13.75 5.27 13.69C4.51 13.64 3.78 13.31 3.24 12.76C2.69 12.22 2.36 11.49 2.31 10.73C2.25 9.96 2.48 9.2 2.94 8.58L3 8.5L5.01 6.5C5.61 5.91 6.41 5.58 7.25 5.58ZM10.73 2.31C11.49 2.36 12.22 2.69 12.76 3.24C13.31 3.78 13.64 4.5 13.69 5.27C13.75 6.04 13.52 6.8 13.06 7.42C13.04 7.45 13.02 7.47 12.99 7.49L10.99 9.5C10.39 10.09 9.59 10.41 8.75 10.41C7.91 10.41 7.11 10.09 6.51 9.5C6.23 9.23 6.23 8.79 6.5 8.51C6.77 8.23 7.21 8.23 7.49 8.5C7.83 8.83 8.28 9.01 8.75 9.01C9.22 9.01 9.67 8.83 10.01 8.5L11.96 6.55C12.21 6.21 12.33 5.79 12.3 5.37C12.26 4.94 12.08 4.53 11.77 4.23C11.47 3.92 11.06 3.73 10.63 3.7C10.21 3.67 9.79 3.79 9.45 4.04L8.7 4.79C8.42 5.07 7.98 5.07 7.7 4.79C7.43 4.52 7.43 4.08 7.7 3.8L8.5 3C8.53 2.98 8.55 2.96 8.58 2.94C9.2 2.48 9.96 2.25 10.73 2.31Z" fill="currentColor"/></symbol>
+</svg>
+
+<div class="sp-shell">
+  <!-- 1 · DARK TOP BAR -->
+  <header class="sp-topbar">
+    <div class="sp-brand">
+      <svg class="sp-brand__logo" aria-hidden="true"><use href="#zc-logo"/></svg>
+      <div class="sp-brand__divider"></div>
+      <span class="sp-brand__ws">Zillum <svg aria-hidden="true"><use href="#zc-caret"/></svg></span>
+    </div>
+    <div class="sp-topbar__spacer"></div>
+    <div class="sp-search">
+      <svg class="sp-search__icon" aria-hidden="true"><use href="#zc-search"/></svg>
+      <div class="sp-search__field">Search in Settings ( / )</div>
+    </div>
+    <div class="sp-topbar__spacer"></div>
+    <div class="sp-topbar__actions">
+      <button class="sp-tbtn sp-tbtn--create" aria-label="Create new"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button>
+      <button class="sp-tbtn" aria-label="Notifications"><svg aria-hidden="true"><use href="#zc-bell"/></svg><span class="sp-badge"><span>1</span></span></button>
+      <button class="sp-tbtn" aria-label="Settings"><svg aria-hidden="true"><use href="#zc-settings"/></svg></button>
+      <div class="sp-avatar">N</div>
+    </div>
+  </header>
+
+  <div class="sp-body">
+    <!-- 2 · SETTINGS LHS (Brand Kit rail) -->
+    <nav class="sp-lhs" aria-label="Settings navigation">
+      <button class="sp-lhs__back"><svg aria-hidden="true"><use href="#zc-arrow-back"/></svg><span>Go Back</span></button>
+      <div class="sp-acc"><button class="sp-acc__header"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings"/></svg><span class="sp-acc__label">General</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      <div class="sp-acc"><button class="sp-acc__header"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-consent-and-privacy"/></svg><span class="sp-acc__label">Security Controls</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      <div class="sp-acc"><button class="sp-acc__header"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-customization"/></svg><span class="sp-acc__label">Customization</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      <div class="sp-acc"><button class="sp-acc__header"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-email"/></svg><span class="sp-acc__label">Email</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      <div class="sp-acc sp-acc--open">
+        <button class="sp-acc__header sp-acc__header--active"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-whatsapp"/></svg><span class="sp-acc__label">WhatsApp</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button>
+        <div class="sp-acc__items">
+          <a class="sp-nav-item sp-nav-item--selected">Overview</a>
+          <a class="sp-nav-item">Preferences</a>
+        </div>
+      </div>
+      <div class="sp-acc"><button class="sp-acc__header"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-sms"/></svg><span class="sp-acc__label">SMS</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      <div class="sp-acc"><button class="sp-acc__header"><svg class="sp-acc__icon" aria-hidden="true"><use href="#zc-settings-integrations"/></svg><span class="sp-acc__label">Integrations</span><svg class="sp-acc__chev" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+    </nav>
+
+    <!-- 3 · SETTINGS RHS -->
+    <main class="sp-content">
+      <div class="sp-ptopbar">
+        <div class="sp-ptopbar__title">Overview</div>
+        <div class="sp-ptopbar__actions">
+          <button class="sp-btn sp-btn--secondary">View credits</button>
+        </div>
+      </div>
+
+      <div class="sp-scroll">
+        <!-- Section: account details -->
+        <section class="sp-section">
+          <div class="sp-section__head"><div class="sp-section__title">WhatsApp Business Account Details</div></div>
+          <div class="sp-fields">
+            <div class="sp-field"><span class="sp-field__label">Account Name</span><span class="sp-field__value">Fashion Studio</span></div>
+            <div class="sp-field"><span class="sp-field__label">Account ID</span><span class="sp-field__value">123830202020270</span></div>
+            <div class="sp-field"><span class="sp-field__label">Account Status</span><span class="sp-field__value is-ok">Verified</span></div>
+          </div>
+        </section>
+
+        <!-- Section: phone numbers -->
+        <section class="sp-section">
+          <div class="sp-section__head">
+            <div class="sp-section__title">Phone Numbers</div>
+            <div class="sp-section__actions">
+              <label class="sp-input-search"><svg aria-hidden="true"><use href="#zc-search"/></svg><input type="text" placeholder="Search"></label>
+              <div class="sp-split">
+                <button class="sp-btn sp-btn--primary">Associate Number</button>
+                <button class="sp-split__drop" aria-label="More associate options"><svg aria-hidden="true"><use href="#zc-caret"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <table class="sp-table">
+            <thead>
+              <tr>
+                <th style="width:30%"><span class="sp-th">Display Name <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                <th style="width:26%"><span class="sp-th">Phone Number <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                <th style="width:22%"><span class="sp-th">Quality Rating <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+                <th style="width:22%"><span class="sp-th">Connection Status <svg aria-hidden="true"><use href="#zc-info"/></svg></span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="sp-cell-name"><span class="sp-cell-name__title">India Marketing</span></div></td>
+                <td><div class="sp-cell-phone"><span>+189 673 413 427</span><button class="sp-linkbtn">Verify <svg aria-hidden="true"><use href="#zc-info"/></svg></button></div></td>
+                <td><span class="sp-quality--unknown">Unknown</span></td>
+                <td>Pending</td>
+              </tr>
+              <tr>
+                <td><div class="sp-cell-name"><span class="sp-cell-name__title">USA Marketing</span><span class="sp-cell-name__sub is-warn">Available without Review</span></div></td>
+                <td><div class="sp-cell-phone"><span>+52 55 1234 5678</span></div></td>
+                <td><span class="sp-quality--high">High</span></td>
+                <td>Connected</td>
+              </tr>
+              <tr>
+                <td><div class="sp-cell-name"><span class="sp-cell-name__title">Mexico Marketing</span></div></td>
+                <td><div class="sp-cell-phone"><span>+ 673 190 413 427</span><button class="sp-linkbtn">Verify <svg aria-hidden="true"><use href="#zc-info"/></svg></button></div></td>
+                <td><span class="sp-quality--unknown">Unknown</span></td>
+                <td>Disconnected</td>
+              </tr>
+              <tr>
+                <td><div class="sp-cell-name"><span class="sp-cell-name__title">ANZ Marketing</span></div></td>
+                <td><div class="sp-cell-phone"><span>+189 673 413 427</span></div></td>
+                <td><span class="sp-quality--low">Low</span></td>
+                <td>Restricted</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
