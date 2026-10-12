@@ -1044,8 +1044,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
   function closeScrim(id){document.getElementById(id).classList.remove('is-open');}
   var CARET='<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
   function closeAllMenus(){
-    document.getElementById('appsMenu').classList.remove('is-open');
-    ['rowMenu','cellWsMenu','matchMenu','accMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
+    ['appsMenu','rowMenu','cellWsMenu','matchMenu','accMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
     document.querySelectorAll('.ap-actions-btn.is-pinned').forEach(function(b){b.classList.remove('is-pinned');});
     document.querySelectorAll('.ws-switch__menu.is-open').forEach(function(m){m.classList.remove('is-open');});
   }
