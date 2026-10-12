@@ -144,6 +144,20 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 .menu.is-open{animation:menuIn var(--zc-duration-fast) var(--zc-easing-standard);}
 @keyframes menuIn{from{opacity:0;transform:translateY(-4px) scaleY(.98);}to{opacity:1;transform:none;}}
 @media (prefers-reduced-motion: reduce){.menu.is-open{animation:none;}}
+.menu-search{display:flex;align-items:center;gap:8px;padding:6px 10px;margin-bottom:4px;border-bottom:1px solid var(--border-subtle);}
+.menu-search svg{width:14px;height:14px;color:var(--icon-subtle);flex-shrink:0;}
+.menu-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;font:400 14px/1 var(--font-family);color:var(--text-primary);}
+.menu-search input::placeholder{color:var(--input-placeholder);}
+.menu-list{max-height:220px;overflow-y:auto;}
+.menu-empty{padding:8px 12px;font:400 13px/1.3 var(--font-family);color:var(--text-tertiary);}
+/* dismissible keyword chips + add-chip button */
+.zc-tag--dismissible{gap:4px;padding-right:4px;}
+.zc-tag__close{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;padding:0;border:none;background:none;cursor:pointer;color:var(--tag-grey-fg);border-radius:2px;flex-shrink:0;}
+.zc-tag__close svg{width:10px;height:10px;}
+.zc-tag__close:hover{background:var(--surface-hover);color:var(--text-primary);}
+.kw-addchip{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:1px dashed var(--border-default);border-radius:var(--radius-xxs);background:none;cursor:pointer;color:var(--text-link);font:500 12px/16px var(--font-family);}
+.kw-addchip svg{width:12px;height:12px;}
+.kw-addchip:hover{border-color:var(--border-brand);background:var(--surface-selected);}
 #appsMenu{min-width:168px;}
 #matchMenu{z-index:8000;}  /* above the drawer (7000) so it isn't hidden behind it */
 .menu.is-open{display:block;}
@@ -177,7 +191,9 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 .ws-switch__trigger svg{width:12px;height:12px;color:var(--icon-subtle);}
 .ws-switch__menu{position:absolute;top:28px;left:0;min-width:220px;background:var(--surface-default);border:1px solid var(--border-subtle);border-radius:var(--radius-s);box-shadow:var(--shadow-m-box);padding:4px;z-index:40;display:none;}
 .ws-sep{color:var(--text-tertiary);margin:0 8px;font-weight:400;}
-.ov-acc-name{font-weight:400;color:var(--text-secondary);}
+.ov-acc-name{display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font:600 15px/1.3 var(--font-family);color:var(--text-link);}
+.ov-acc-name:hover{color:var(--text-link-hover);}
+.ov-acc-name svg{width:12px;height:12px;color:currentColor;flex-shrink:0;}
 .ws-switch--topbar .ws-switch__trigger{gap:6px;font:500 14px/1 var(--font-family);}
 .ws-switch__label{color:var(--text-tertiary);font-weight:400;}
 .ws-switch--topbar .ws-switch__menu{left:auto;right:0;}
@@ -687,7 +703,6 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
         <div class="sp-ptopbar">
           <div class="sp-ptopbar__title">Overview</div>
           <div class="sp-ptopbar__actions">
-            <span class="ws-switch ws-switch--topbar"><button class="ws-switch__trigger" onclick="toggleWsMenu(event)"><span class="ws-switch__label">Workspace:</span><span class="ws-cur-name">North Region Dealers</span><svg aria-hidden="true"><use href="#zc-caret"/></svg></button><div class="ws-switch__menu"><button class="ws-switch__item ws-switch__item--sel" onclick="switchWs('North Region Dealers',true)">North Region Dealers</button><button class="ws-switch__item" onclick="switchWs('West Region Dealers',false)">West Region Dealers</button></div></span>
             <button class="sp-btn sp-btn--secondary">View credits</button>
           </div>
         </div>
@@ -695,7 +710,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
           <div id="overviewAssigned">
             <section class="sp-section">
               <div class="sp-section__head">
-                <div class="sp-section__title">WhatsApp Business account details <span class="ws-sep">•</span><span class="ov-acc-name">Zoho Campaigns Local</span></div>
+                <div class="sp-section__title">WhatsApp Business account details <span class="ws-sep">•</span><button class="ov-acc-name" onclick="openAccMenu(event)">Zoho Campaigns Local<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
                 <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="Refresh account details"><svg aria-hidden="true"><use href="#zc-refresh"/></svg></button>
               </div>
               <div class="sp-fields">
@@ -749,8 +764,8 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
               <div class="pref-block__title">Opt-in and opt-out keywords</div>
               <div class="pref-block__desc">A contact is automatically opted in or out when they reply with one of these keywords.</div>
               <div class="kw-groups">
-                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag">START</span><span class="zc-tag">SUBSCRIBE</span><span class="zc-tag">YES</span></div></div>
-                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag">STOP</span><span class="zc-tag">STOPALL</span><span class="zc-tag">UNSUBSCRIBE</span><span class="zc-tag">CANCEL</span></div></div>
+                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">START<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">SUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">YES<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" onclick="openKeywords('in')"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Add</button></div></div>
+                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">STOP<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">STOPALL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">UNSUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">CANCEL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" onclick="openKeywords('out')"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Add</button></div></div>
               </div>
               <button class="pref-manage" onclick="openKeywords()"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage</button>
             </div>
@@ -912,8 +927,8 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
               <div class="pref-block__title">Opt-in and opt-out keywords</div>
               <div class="pref-block__desc">A contact is automatically opted in or out when they reply with one of these keywords.</div>
               <div class="kw-groups">
-                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag">START</span><span class="zc-tag">SUBSCRIBE</span><span class="zc-tag">YES</span></div></div>
-                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag">STOP</span><span class="zc-tag">STOPALL</span><span class="zc-tag">UNSUBSCRIBE</span><span class="zc-tag">CANCEL</span></div></div>
+                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">START<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">SUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">YES<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" onclick="openKeywords('in')"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Add</button></div></div>
+                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">STOP<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">STOPALL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">UNSUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">CANCEL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" onclick="openKeywords('out')"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Add</button></div></div>
               </div>
               <button class="pref-manage" onclick="openKeywords()"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage</button>
             </div>
@@ -972,12 +987,28 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
   <button class="menu__item" onclick="pickMatch('Exact match')">Exact match</button>
 </div>
 
-<!-- inline workspace picker (DS Menu) for the Linked Workspace column -->
+<!-- inline workspace picker (DS Menu + search) for the Linked Workspace column -->
 <div class="menu" id="cellWsMenu" style="position:fixed;top:auto;right:auto;">
-  <button class="menu__item" onclick="pickCellWs('South Region Dealers')">South Region Dealers</button>
-  <button class="menu__item" onclick="pickCellWs('East Region Dealers')">East Region Dealers</button>
-  <button class="menu__item" onclick="pickCellWs('West Region Dealers')">West Region Dealers</button>
-  <button class="menu__item" onclick="pickCellWs('Central Operations')">Central Operations</button>
+  <div class="menu-search" onclick="event.stopPropagation()"><svg aria-hidden="true"><use href="#zc-search"/></svg><input type="text" id="cellWsSearch" placeholder="Search workspaces" oninput="filterCellWs(this.value)" onkeydown="event.stopPropagation()"></div>
+  <div class="menu-list" id="cellWsList">
+    <button class="menu__item" onclick="pickCellWs('South Region Dealers')">South Region Dealers</button>
+    <button class="menu__item" onclick="pickCellWs('East Region Dealers')">East Region Dealers</button>
+    <button class="menu__item" onclick="pickCellWs('West Region Dealers')">West Region Dealers</button>
+    <button class="menu__item" onclick="pickCellWs('Central Operations')">Central Operations</button>
+    <button class="menu__item" onclick="pickCellWs('North Region Dealers')">North Region Dealers</button>
+    <button class="menu__item" onclick="pickCellWs('Metro Retail')">Metro Retail</button>
+    <button class="menu__item" onclick="pickCellWs('Coastal Retail')">Coastal Retail</button>
+  </div>
+  <div class="menu-empty" id="cellWsEmpty" style="display:none;">No matches</div>
+</div>
+
+<!-- WABA account picker (DS Menu) for the Overview account-name switcher -->
+<div class="menu" id="accMenu" style="position:fixed;top:auto;right:auto;">
+  <button class="menu__item" onclick="pickAcc('Zoho Campaigns Local')">Zoho Campaigns Local</button>
+  <button class="menu__item" onclick="pickAcc('Metro Retail WA')">Metro Retail WA</button>
+  <button class="menu__item" onclick="pickAcc('South Dealers WA')">South Dealers WA</button>
+  <button class="menu__item" onclick="pickAcc('East Dealers WA')">East Dealers WA</button>
+  <button class="menu__item" onclick="pickAcc('Harbor Dealers WA')">Harbor Dealers WA</button>
 </div>
 
 <div class="zc-toast-container" id="toasts"></div>
@@ -1016,7 +1047,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
   var CARET='<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
   function closeAllMenus(){
     document.getElementById('appsMenu').classList.remove('is-open');
-    ['rowMenu','cellWsMenu','matchMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
+    ['rowMenu','cellWsMenu','matchMenu','accMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
     document.querySelectorAll('.ap-actions-btn.is-pinned').forEach(function(b){b.classList.remove('is-pinned');});
     document.querySelectorAll('.ws-switch__menu.is-open').forEach(function(m){m.classList.remove('is-open');});
   }
@@ -1033,7 +1064,10 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
     closeAllMenus();
   }
   // inline workspace picker in the Linked Workspace column (no modal)
-  function openCellWs(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('cellWsMenu');var wasOpen=m.classList.contains('is-open')&&window._wsTrigger===btn;var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._wsTrigger=btn;window._wsRow=btn.closest('tr');m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.classList.add('is-open');}
+  function openCellWs(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('cellWsMenu');var wasOpen=m.classList.contains('is-open')&&window._wsTrigger===btn;var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._wsTrigger=btn;window._wsRow=btn.closest('tr');m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.classList.add('is-open');var s=document.getElementById('cellWsSearch');if(s){s.value='';filterCellWs('');setTimeout(function(){s.focus();},0);}}
+  function filterCellWs(q){q=(q||'').toLowerCase();var any=false;document.querySelectorAll('#cellWsList .menu__item').forEach(function(it){var hit=it.textContent.toLowerCase().indexOf(q)>-1;it.style.display=hit?'':'none';if(hit)any=true;});document.getElementById('cellWsEmpty').style.display=any?'none':'';}
+  function openAccMenu(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('accMenu');var wasOpen=m.classList.contains('is-open');var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._accTrigger=btn;m.style.left=r.left+'px';m.style.top=(r.bottom+6)+'px';m.classList.add('is-open');}
+  function pickAcc(name){var b=window._accTrigger;closeAllMenus();if(b)b.innerHTML=name+'<svg aria-hidden="true"><use href="#zc-caret"/></svg>';}
   // only unlinked accounts get this picker; linking is one-way (no change once linked)
   function pickCellWs(name){
     var row=window._wsRow, tr=window._wsTrigger; closeAllMenus();
@@ -1070,7 +1104,8 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
     if(rows.length<=1)return;  // keep at least one
     btn.closest('.kw-edit-row').remove();ensurePlus(panel);
   }
-  function openKeywords(){closeAllMenus();document.getElementById('kwDrawer').classList.add('is-open');requestAnimationFrame(positionTabInd);}
+  function openKeywords(which){closeAllMenus();document.getElementById('kwDrawer').classList.add('is-open');if(which==='in'||which==='out'){switchKwTab(which);}else{requestAnimationFrame(positionTabInd);}}
+  function removeChip(btn){var chip=btn.closest('.zc-tag');if(chip)chip.remove();}
   function closeKeywords(){document.getElementById('kwDrawer').classList.remove('is-open');}
   function positionTabInd(){
     var active=document.querySelector('.zc-drawer__tab.is-active');
