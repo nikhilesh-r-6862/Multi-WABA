@@ -194,6 +194,12 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 .ov-acc-name svg{width:12px;height:12px;color:currentColor;flex-shrink:0;}
 .ws-switch--topbar .ws-switch__trigger{gap:6px;font:500 14px/1 var(--font-family);}
 .ws-switch__label{color:var(--text-tertiary);font-weight:400;}
+.ov-acc-plain{font-weight:400;color:var(--text-secondary);}
+#overviewAssigned .ctx-banner{justify-content:flex-start;gap:8px;margin:16px 20px 0;}
+#overviewAssigned .ctx-banner svg{width:16px;height:16px;color:var(--info-solid);flex-shrink:0;}
+.ws-switch__sep{height:1px;background:var(--border-subtle);margin:4px 6px;}
+.ws-switch__item--create{color:var(--text-link);gap:8px;}
+.ws-switch__item--create svg{width:14px;height:14px;}
 .ws-switch--topbar .ws-switch__menu{left:auto;right:0;}
 .ws-switch__menu.is-open{display:block;}
 .ws-switch__item{display:flex;align-items:center;width:100%;height:36px;padding:0 12px;border:none;background:none;cursor:pointer;font:400 14px/1.3 var(--font-family);color:var(--text-primary);text-align:left;border-radius:var(--radius-xs);}
@@ -210,6 +216,17 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 /* preferences */
 .org-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:var(--radius-full);background:var(--surface-brand-subtle);border:1px solid var(--border-info);color:var(--accent-s20);font:600 11px/1.3 var(--font-family);}
 .org-tag svg{width:12px;height:12px;}
+/* ===== PRD v3 — prototype phase/role controls + phase-driven visibility ===== */
+.proto-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:12px;padding:6px 10px;background:var(--surface-inverse);border-radius:var(--radius-full);box-shadow:var(--shadow-l-box);}
+.proto-bar__label{font:600 11px/1 var(--font-family);color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.04em;padding-left:4px;}
+.proto-seg{display:flex;background:rgba(255,255,255,.12);border-radius:var(--radius-full);padding:2px;}
+.proto-seg__btn{border:none;background:none;cursor:pointer;padding:5px 12px;border-radius:var(--radius-full);font:500 12px/1 var(--font-family);color:rgba(255,255,255,.8);}
+.proto-seg__btn.is-on{background:#fff;color:var(--text-primary);}
+body[data-phase="1"] .p2-only{display:none !important;}
+body[data-phase="2"] .p1-only{display:none !important;}
+/* Preferences read-only (workspace-admin role) */
+body[data-role="ws"] .pref-ro-hide{display:none !important;}
+body[data-role="super"] .pref-ro-only{display:none !important;}
 .pref-block{display:flex;flex-direction:column;gap:6px;}
 .pref-block__title{display:flex;align-items:center;gap:10px;font:600 15px/1.3 var(--font-family);color:var(--text-primary);}
 .pref-block__desc{font:400 13.5px/1.5 var(--font-family);color:var(--text-secondary);}
@@ -395,6 +412,10 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 /* DS Select (trigger + menu) — zc-select-system */
 .zc-dsel{position:relative;}
 .zc-dsel__trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:36px;padding:8px 10px;border:1px solid var(--input-border);border-radius:var(--radius-xs);background:var(--input-bg);cursor:pointer;font:400 13px/1 var(--font-family);color:var(--text-primary);text-align:left;}
+.zc-dsel__trigger:hover{border-color:var(--border-strong);}
+.is-ph{color:var(--text-placeholder);}
+.camp-field{margin-bottom:16px;}
+.camp-field .zc-field__label{display:block;margin-bottom:6px;}
 .zc-dsel__trigger.is-placeholder{color:var(--text-placeholder);}
 .zc-dsel__trigger:hover{border-color:var(--border-strong);}
 .zc-dsel__trigger.is-open{border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
@@ -448,7 +469,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
 </head>
-<body>
+<body data-phase="2" data-role="super">
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
 <symbol id="zc-logo" viewBox="0 0 24 23" fill="currentColor"><path d="M23.968 15.074L21.6257 1.75587C21.4767 0.891817 20.8229 0.218851 19.9704 0.044378C19.1262 -0.130095 18.282 0.218851 17.802 0.933358C18.0254 0.634262 18.4393 0.55118 18.7538 0.758885C19.0766 0.974899 19.1676 1.40693 18.9607 1.73926L18.9524 1.74756C18.9524 1.74756 18.9524 1.73926 18.9607 1.73926C19.2007 1.36539 19.5814 1.40693 19.689 1.43185C19.7966 1.45678 20.1608 1.56478 20.2435 2.00512L22.5775 15.3232C22.6272 15.6057 22.503 15.8051 22.4203 15.9048C22.3375 16.0045 22.1637 16.154 21.8823 16.154H8.27577C7.88678 16.154 7.57227 16.4697 7.57227 16.8602C7.57227 17.2507 7.88678 17.5664 8.27577 17.5664H10.0883L8.80547 21.1223C8.70615 21.4048 8.4413 21.5876 8.14335 21.5876H7.57227C7.23294 21.5876 6.94326 21.3384 6.87705 21.006L4.41894 7.07313L15.3439 1.89711C15.6915 1.73095 15.8487 1.30723 15.6832 0.958283C15.5177 0.609337 15.0956 0.451481 14.748 0.617645L1.20767 7.03159C0.34692 7.4387 -0.133115 8.37753 0.0324139 9.31635L1.17457 15.8134C1.34837 16.827 2.22568 17.5664 3.25196 17.5664H4.84104L5.49488 21.247C5.67696 22.2606 6.54599 23 7.57227 23H8.14335C9.02893 23 9.83175 22.435 10.1297 21.6042L11.5864 17.5664H21.8906C22.5196 17.5664 23.1072 17.2922 23.5045 16.8104C23.91 16.3285 24.0755 15.6971 23.968 15.074ZM3.25196 16.154C2.91262 16.154 2.61467 15.9048 2.55674 15.5724L1.41458 9.07542C1.35665 8.7597 1.52218 8.4523 1.81185 8.31106L3.10298 7.70456L4.59275 16.154H3.25196Z" fill="#E42527"/><path d="M18.7455 0.758872C18.431 0.551166 18.0172 0.634249 17.7937 0.933345C17.7854 0.941653 17.7772 0.949961 17.7689 0.966578L12.2237 9.50743C12.025 9.80653 11.636 9.91454 11.3215 9.74837L8.07715 8.11165C7.72953 7.93718 7.30743 8.07842 7.13363 8.42736C6.95982 8.77631 7.10052 9.20003 7.44813 9.3745L10.6925 11.0112C10.9987 11.1608 11.3215 11.2355 11.6443 11.2355C12.3395 11.2355 13.0099 10.8949 13.4155 10.2718L18.9607 1.73924L18.969 1.73093C19.1676 1.40691 19.0766 0.974886 18.7455 0.758872Z" fill="#226DB4"/></symbol>
@@ -601,7 +622,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
                 <div class="apps-apptitle__name">WhatsApp</div>
               </div>
               <div class="sp-section__actions">
-                <button class="sp-btn sp-btn--primary"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Create Campaign</button>
+                <button class="sp-btn sp-btn--primary" onclick="openSender()"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Create Campaign</button>
                 <div class="menu-wrap">
                   <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="More options" onclick="toggleMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button>
                   <div class="menu" id="appsMenu">
@@ -616,67 +637,76 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
           <section class="sp-section sp-section--flush">
             <table class="ov-table ap-table">
               <thead><tr>
-                <th style="width:30%">Account Name</th>
-                <th style="width:14%">Status</th>
-                <th style="width:20%">Connected On</th>
-                <th style="width:26%">Linked Workspace</th>
-                <th style="width:10%"></th>
+                <th>Account Name</th>
+                <th class="p1-only">ID</th>
+                <th>Status</th>
+                <th>Connected On</th>
+                <th class="p2-only">Linked Workspace</th>
+                <th style="width:40px"></th>
               </tr></thead>
               <tbody>
                 <tr>
                   <td><div class="ap-name"><span class="ap-name__t">Zoho Campaigns Local</span></div></td>
+                  <td class="p1-only">122103562760008817</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Apr 27, 2026<span class="ap-conn-by">by Priya Nair</span></td>
-                  <td>North Region Dealers</td>
+                  <td class="p2-only"><button class="ap-ws" data-midsend="1" onclick="openCellWs(event)">North Region Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr class="is-unlinked">
                   <td><div class="ap-name"><span class="ap-name__t">Acme Dealer WABA</span></div></td>
+                  <td class="p1-only">109882340022117</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Sep 10, 2026<span class="ap-conn-by">by Rahul Verma</span></td>
-                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
                   <td><div class="ap-name"><span class="ap-name__t">Metro Retail WA</span></div></td>
+                  <td class="p1-only">338812004471560</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Aug 02, 2026<span class="ap-conn-by">by Anita Desai</span></td>
-                  <td>Metro Retail</td>
+                  <td class="p2-only"><button class="ap-ws" onclick="openCellWs(event)">Metro Retail<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
                   <td><div class="ap-name"><span class="ap-name__t">South Dealers WA</span></div></td>
+                  <td class="p1-only">338812004472014</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Jul 19, 2026<span class="ap-conn-by">by Priya Nair</span></td>
-                  <td>South Region Dealers</td>
+                  <td class="p2-only"><button class="ap-ws" onclick="openCellWs(event)">South Region Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
                   <td><div class="ap-name"><span class="ap-name__t">East Dealers WA</span></div></td>
+                  <td class="p1-only">338812004472190</td>
                   <td><span class="ap-status ap-status--pending">Pending</span></td>
                   <td>Jun 30, 2026<span class="ap-conn-by">by Karan Mehta</span></td>
-                  <td>East Region Dealers</td>
+                  <td class="p2-only"><button class="ap-ws" onclick="openCellWs(event)">East Region Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr class="is-unlinked">
                   <td><div class="ap-name"><span class="ap-name__t">Coastal Retail WA</span></div></td>
+                  <td class="p1-only">338812004472663</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Jun 12, 2026<span class="ap-conn-by">by Anita Desai</span></td>
-                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
                   <td><div class="ap-name"><span class="ap-name__t">Harbor Dealers WA</span></div></td>
+                  <td class="p1-only">338812004473001</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>May 28, 2026<span class="ap-conn-by">by Rahul Verma</span></td>
-                  <td>Harbor Dealers</td>
+                  <td class="p2-only"><button class="ap-ws" onclick="openCellWs(event)">Harbor Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr class="is-unlinked">
                   <td><div class="ap-name"><span class="ap-name__t">Prime Motors WA</span></div></td>
+                  <td class="p1-only">338812004473248</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>May 05, 2026<span class="ap-conn-by">by Karan Mehta</span></td>
-                  <td><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><button class="ap-ws ap-ws--link" onclick="openCellWs(event)">Link to workspace<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
               </tbody>
@@ -701,14 +731,16 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
         <div class="sp-ptopbar">
           <div class="sp-ptopbar__title">Overview</div>
           <div class="sp-ptopbar__actions">
+            <span class="ws-switch ws-switch--topbar p2-only"><button class="ws-switch__trigger" onclick="toggleWsMenu(event)"><span class="ws-switch__label">Workspace:</span><span class="ws-cur-name">North Region Dealers</span><svg aria-hidden="true"><use href="#zc-caret"/></svg></button><div class="ws-switch__menu"><button class="ws-switch__item ws-switch__item--sel" onclick="switchWs('North Region Dealers',true)">North Region Dealers</button><button class="ws-switch__item" onclick="switchWs('West Region Dealers',false)">West Region Dealers</button><div class="ws-switch__sep"></div><button class="ws-switch__item ws-switch__item--create" onclick="closeAllMenus();openScrim('scrimWsCreate')"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Create workspace</button></div></span>
             <button class="sp-btn sp-btn--secondary">View credits</button>
           </div>
         </div>
         <div class="sp-scroll">
           <div id="overviewAssigned">
+            <div class="ctx-banner p2-only"><svg aria-hidden="true"><use href="#zc-info"/></svg>You're viewing the WhatsApp setup for <strong>North Region Dealers</strong>. Preferences are organisation-wide and managed by the Super Admin.</div>
             <section class="sp-section">
               <div class="sp-section__head">
-                <div class="sp-section__title">WhatsApp Business account details <span class="ws-sep">•</span><button class="ov-acc-name" onclick="openAccMenu(event)">Zoho Campaigns Local<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+                <div class="sp-section__title">WhatsApp Business account details <span class="ws-sep">•</span><button class="ov-acc-name p1-only" onclick="openAccMenu(event)">Zoho Campaigns Local<svg aria-hidden="true"><use href="#zc-caret"/></svg></button><span class="ov-acc-plain p2-only">Zoho Campaigns Local</span></div>
                 <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="Refresh account details"><svg aria-hidden="true"><use href="#zc-refresh"/></svg></button>
               </div>
               <div class="sp-fields">
@@ -737,7 +769,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
             </section>
           </div>
 
-          <div id="overviewEmpty" style="display:none;">
+          <div id="overviewEmpty" class="p2-only" style="display:none;">
             <section class="sp-section">
               <div class="empty">
                 <img class="empty__illo" src="data:image/png;base64,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" alt="" width="161" height="140">
@@ -757,6 +789,7 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
           <div class="sp-ptopbar__title">Preferences <span class="org-tag">Organisation-wide</span></div>
         </div>
         <div class="sp-scroll">
+          <div class="ctx-banner pref-ro-only" style="justify-content:flex-start;gap:8px;margin:16px 20px 0;"><svg aria-hidden="true" style="width:16px;height:16px;flex-shrink:0"><use href="#zc-lock"/></svg>These settings are organisation-wide and managed by your Super Admin. They're read-only here.</div>
           <section class="sp-section">
             <div class="pref-block">
               <div class="pref-block__title">Opt-in and opt-out keywords</div>
@@ -1009,10 +1042,126 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
   <button class="menu__item" onclick="pickAcc('Harbor Dealers WA')">Harbor Dealers WA</button>
 </div>
 
+<!-- MODAL: Phase 2 transition summary -->
+<div class="zc-scrim" id="scrimTransition">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">Assign your accounts to workspaces</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimTransition')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <p>You've enabled Workspaces. You have <strong>8 connected WhatsApp Business Accounts</strong> — each workspace can have at most one. They are now <strong>Unassigned</strong>; link each to a workspace to keep using it.</p>
+      <div class="wa-strip wa-strip--warn"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-alert-circle"/></svg></div><div><div class="wa-strip__name">8 accounts need assignment</div><div class="wa-strip__meta">Campaigns on unassigned accounts are paused until they're linked.</div></div></div>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="closeScrim('scrimTransition');go('apps')">Review accounts</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimTransition')">Later</button></div>
+  </div>
+</div>
+
+<!-- MODAL: blocked add (Phase 2 gate) -->
+<div class="zc-scrim" id="scrimBlocked">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">Link the existing account first</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimBlocked')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <p>You have a WhatsApp Business Account that isn't linked to a workspace yet. Link it to a workspace before adding another account.</p>
+      <div class="wa-strip wa-strip--warn"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-whatsapp"/></svg></div><div><div class="wa-strip__name">Acme Dealer WABA</div><div class="wa-strip__meta">Unassigned</div></div></div>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="closeScrim('scrimBlocked')">Link now</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimBlocked')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- MODAL: change workspace impact (Option A/B) -->
+<div class="zc-scrim" id="scrimImpact">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">Change workspace</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimImpact')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <p>Moving <strong id="impactAcc">—</strong> to <strong id="impactNewWs">—</strong> affects the active items in <strong id="impactOldWs">—</strong>. Choose how to handle them.</p>
+      <div class="impact-group"><div class="impact-group__head"><span class="impact-group__ws" id="impactGroupWs">—</span><span class="impact-group__count">6 items</span></div>
+        <ul class="impact-list"><li><span class="impact-count">2</span> scheduled campaigns</li><li><span class="impact-count">2</span> drafts</li><li><span class="impact-count">1</span> sent campaign (kept read-only)</li><li><span class="impact-count">1</span> inbox conversation</li></ul></div>
+      <label class="choice is-selected" id="choiceA" onclick="pickChoice('A')"><div class="choice__row"><span class="choice__radio"></span><div><div class="choice__title">Allow &amp; clean up</div><div class="choice__desc">Stop scheduled campaigns and workflows, clear the account from drafts, keep sent campaigns read-only, and archive inbox conversations. Then link to the new workspace.</div></div></div></label>
+      <label class="choice" id="choiceB" onclick="pickChoice('B')"><div class="choice__row"><span class="choice__radio"></span><div><div class="choice__title">Let this workspace handle it first</div><div class="choice__desc">The workspace admin gets deep links to each item. The change stays blocked until everything is cleared.</div></div></div></label>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" id="impactConfirm" onclick="confirmImpact()">Allow &amp; clean up</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimImpact')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- MODAL: mid-send block -->
+<div class="zc-scrim" id="scrimMidsend">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">Change blocked — a campaign is sending</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimMidsend')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <p>A campaign in this workspace is using this account right now. The change is blocked until it finishes, so no messages are interrupted.</p>
+      <div class="wa-strip wa-strip--err"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-alert-circle"/></svg></div><div><div class="wa-strip__name" id="midsendWs">—</div><div class="wa-strip__meta">“Festive Flash Sale” is currently sending to 8,240 contacts.</div></div></div>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimMidsend')">Close</button></div>
+  </div>
+</div>
+
+<!-- MODAL: create workspace (Phase 2) — WABA linking prompt -->
+<div class="zc-scrim" id="scrimWsCreate">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">Create workspace</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimWsCreate')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <div class="camp-field"><label class="zc-field__label">Workspace name</label><input class="pref-input" type="text" value="New Region Dealers" style="width:100%"></div>
+      <div class="zc-field__label" style="margin-bottom:8px">Link a WhatsApp Business Account to this workspace?</div>
+      <label class="choice is-selected" id="wsLinkExisting" onclick="pickWsLink('existing')"><div class="choice__row"><span class="choice__radio"></span><div><div class="choice__title">Pick from existing Unassigned accounts</div><div class="choice__desc">Acme Dealer WABA · Coastal Retail WA · Prime Motors WA</div></div></div></label>
+      <label class="choice" id="wsLinkNew" onclick="pickWsLink('new')"><div class="choice__row"><span class="choice__radio"></span><div><div class="choice__title">Connect a new WhatsApp Business Account</div><div class="choice__desc">Opens Meta Embedded Signup.</div></div></div></label>
+      <label class="choice" id="wsLinkSkip" onclick="pickWsLink('skip')"><div class="choice__row"><span class="choice__radio"></span><div><div class="choice__title">Skip for now</div><div class="choice__desc">The workspace starts in the empty state; link anytime from Integrations → Apps.</div></div></div></label>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="confirmWsCreate()">Create workspace</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimWsCreate')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- MODAL: campaign creation (Phase 1) — Sender ↔ Template constraint -->
+<div class="zc-scrim" id="scrimSender">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">New WhatsApp campaign</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimSender')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <div class="camp-field"><label class="zc-field__label">Sender</label>
+        <div class="zc-dsel"><button type="button" class="zc-dsel__trigger" onclick="toggleSenderMenu(event)"><span id="senderVal" class="is-ph">Select a sender</span><svg class="zc-dsel__caret" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      </div>
+      <div class="camp-field"><label class="zc-field__label">Template</label>
+        <div class="zc-dsel"><button type="button" class="zc-dsel__trigger" onclick="toggleTemplateMenu(event)"><span id="templateVal" class="is-ph">Select a template</span><svg class="zc-dsel__caret" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      </div>
+      <div class="zc-helper">The template list only shows templates belonging to the chosen sender — a sender/template mismatch isn't possible.</div>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="closeScrim('scrimSender');toast('success','Campaign draft created')">Continue</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimSender')">Cancel</button></div>
+  </div>
+</div>
+
+<div class="menu" id="senderMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
+<div class="menu" id="templateMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
+
+<!-- PROTOTYPE controls (not product UI): switch phase + role to demo PRD v3 states -->
+<div class="proto-bar">
+  <span class="proto-bar__label">Prototype</span>
+  <div class="proto-seg" id="phaseSeg">
+    <button class="proto-seg__btn" data-phase="1" onclick="setPhase('1')">Phase 1</button>
+    <button class="proto-seg__btn is-on" data-phase="2" onclick="setPhase('2')">Phase 2</button>
+  </div>
+  <div class="proto-seg" id="roleSeg">
+    <button class="proto-seg__btn is-on" data-role="super" onclick="setRole('super')">Super Admin</button>
+    <button class="proto-seg__btn" data-role="ws" onclick="setRole('ws')">Workspace Admin</button>
+  </div>
+</div>
+
 <div class="zc-toast-container" id="toasts"></div>
 
 <script>
   var unassignedExists=true;
+  // ===== PRD v3: phase (1 pool / 2 workspaces) + role (super / ws admin) =====
+  function setSeg(segId,attr,val){document.querySelectorAll('#'+segId+' .proto-seg__btn').forEach(function(b){b.classList.toggle('is-on',b.getAttribute(attr)===val);});}
+  function setPhase(p){
+    var prev=document.body.dataset.phase;
+    document.body.dataset.phase=p; setSeg('phaseSeg','data-phase',p); closeAllMenus();
+    if(p==='2'&&prev==='1'){openScrim('scrimTransition');}   // one-time migration notice
+  }
+  function setRole(r){document.body.dataset.role=r; setSeg('roleSeg','data-role',r); applyRole(r);}
+  function applyRole(r){
+    var ro=(r==='ws');
+    // Preferences controls: workspace admin = read-only
+    document.querySelectorAll('#screen-preferences .sp-toggle').forEach(function(t){
+      t.classList.toggle('is-ro',ro); t.setAttribute('aria-disabled',ro?'true':'false');
+    });
+    document.querySelectorAll('#screen-preferences .pref-input').forEach(function(i){i.disabled=ro;});
+    document.querySelectorAll('#screen-preferences .pref-manage,#screen-preferences .kw-addchip,#screen-preferences .zc-tag__close').forEach(function(b){b.style.display=ro?'none':'';});
+  }
   var SCREENS={
     'apps':{acc:'accIntegrations',nav:'navApps'},
     'overview':{acc:'accWhatsapp',nav:'navOverview'},
@@ -1044,13 +1193,20 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
   function closeScrim(id){document.getElementById(id).classList.remove('is-open');}
   var CARET='<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
   function closeAllMenus(){
-    ['appsMenu','rowMenu','cellWsMenu','matchMenu','accMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
+    ['appsMenu','rowMenu','cellWsMenu','matchMenu','accMenu','senderMenu','templateMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
     document.querySelectorAll('.ap-actions-btn.is-pinned').forEach(function(b){b.classList.remove('is-pinned');});
     document.querySelectorAll('.ws-switch__menu.is-open').forEach(function(m){m.classList.remove('is-open');});
   }
   function openRowMenu(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('rowMenu');var r=btn.getBoundingClientRect();closeAllMenus();btn.classList.add('is-pinned');m.style.left=(r.right-220)+'px';m.style.top=(r.bottom+4)+'px';m.classList.add('is-open');}
   function rowDisconnect(){closeAllMenus(); toast('success','Account disconnected');}
-  function addAccount(){closeAllMenus(); /* opens Meta onboarding in a new tab — no in-product interaction */}
+  function addAccount(){
+    closeAllMenus();
+    // Phase 2: forced-association gate — block while any WABA is Unassigned
+    if(document.body.dataset.phase==='2' && document.querySelector('.ap-table tr.is-unlinked')){openScrim('scrimBlocked');return;}
+    toast('success', document.body.dataset.phase==='2'
+      ? 'WhatsApp Business Account connected. Please link it to a workspace to activate it.'
+      : 'WhatsApp Business Account connected.');
+  }
   function toggleMenu(e){e.stopPropagation();var m=document.getElementById('appsMenu');var open=m.classList.contains('is-open');closeAllMenus();if(!open)m.classList.add('is-open');}
   function toggleWsMenu(e){e.stopPropagation();var m=e.currentTarget.parentNode.querySelector('.ws-switch__menu');var open=m.classList.contains('is-open');closeAllMenus();if(!open)m.classList.add('is-open');}
   function switchWs(name,assigned){
@@ -1066,14 +1222,65 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
   function openAccMenu(e){e.stopPropagation();var btn=e.currentTarget;var m=document.getElementById('accMenu');var wasOpen=m.classList.contains('is-open');var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._accTrigger=btn;m.style.left=r.left+'px';m.style.top=(r.bottom+6)+'px';m.classList.add('is-open');}
   function pickAcc(name){var b=window._accTrigger;closeAllMenus();if(b)b.innerHTML=name+'<svg aria-hidden="true"><use href="#zc-caret"/></svg>';}
   // only unlinked accounts get this picker; linking is one-way (no change once linked)
+  var CARET='<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
   function pickCellWs(name){
     var row=window._wsRow, tr=window._wsTrigger; closeAllMenus();
     if(!row||!tr)return;
-    var td=tr.closest('td'); if(td)td.textContent=name;  // becomes plain text, no dropdown
-    row.classList.remove('is-unlinked');
-    unassignedExists=!!document.querySelector('.ap-table tr.is-unlinked');
-    toast('success','WABA linked to '+name);
+    if(row.classList.contains('is-unlinked')){                 // first-time link
+      tr.classList.remove('ap-ws--link'); tr.innerHTML=name+CARET; row.classList.remove('is-unlinked');
+      unassignedExists=!!document.querySelector('.ap-table tr.is-unlinked');
+      toast('success','WABA linked to '+name); return;
+    }
+    // already linked → relink (Disconnect Impact, or mid-send block)
+    var cur=tr.textContent.trim(); if(name===cur)return;
+    window._pendingWs=name; window._pendingTrigger=tr;
+    var acc=row.querySelector('.ap-name__t').textContent.trim();
+    if(tr.dataset.midsend==='1'){document.getElementById('midsendWs').textContent=cur;openScrim('scrimMidsend');return;}
+    document.getElementById('impactAcc').textContent=acc;
+    document.getElementById('impactNewWs').textContent=name;
+    document.getElementById('impactOldWs').textContent=cur;
+    document.getElementById('impactGroupWs').textContent=cur;
+    pickChoice('A'); openScrim('scrimImpact');
   }
+  function pickChoice(w){
+    document.getElementById('choiceA').classList.toggle('is-selected',w==='A');
+    document.getElementById('choiceB').classList.toggle('is-selected',w==='B');
+    document.getElementById('impactConfirm').textContent=w==='A'?'Allow & clean up':'Send links & wait';
+    window._c=w;
+  }
+  function confirmImpact(){
+    closeScrim('scrimImpact');
+    if(window._c==='B'){toast('info','Deep links sent to the workspace admin');return;}
+    var tr=window._pendingTrigger,name=window._pendingWs; if(tr)tr.innerHTML=name+CARET;
+    toast('success','Workspace changed to '+name);
+  }
+  // Create workspace (Phase 2) — WABA linking prompt
+  function pickWsLink(mode){window._wsLink=mode;['wsLinkExisting','wsLinkNew','wsLinkSkip'].forEach(function(id){document.getElementById(id).classList.toggle('is-selected',id==='wsLink'+(mode.charAt(0).toUpperCase()+mode.slice(1)));});}
+  function confirmWsCreate(){
+    closeScrim('scrimWsCreate');
+    var m=window._wsLink||'skip';
+    if(m==='skip')toast('info','Workspace created. No WhatsApp Business Account linked yet.');
+    else if(m==='new')toast('success','Workspace created. Connect the account in Meta to finish linking.');
+    else toast('success','Workspace created and linked to the selected account.');
+  }
+  // Campaign creation (Phase 1) — Sender ↔ Template constraint
+  var SENDER_TEMPLATES={
+    'Zoho Campaigns Local  ·  +1 208 352 2602':['Welcome message','Order update'],
+    'Metro Retail WA  ·  +1 415 555 0132':['Festive offer','Cart reminder'],
+    'Harbor Dealers WA  ·  +1 617 555 0144':['Service reminder','Feedback request']
+  };
+  function openSender(){closeAllMenus();window._sender='';window._template='';
+    document.getElementById('senderVal').textContent='Select a sender';document.getElementById('senderVal').classList.add('is-ph');
+    document.getElementById('templateVal').textContent='Select a template';document.getElementById('templateVal').classList.add('is-ph');
+    openScrim('scrimSender');}
+  function toggleSenderMenu(e){e.stopPropagation();var m=document.getElementById('senderMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;var items=Object.keys(SENDER_TEMPLATES).map(function(s){return '<button class="menu__item" onclick="pickSender(this.textContent)">'+s+'</button>';}).join('');m.innerHTML=items;var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  function pickSender(s){window._sender=s;window._template='';closeAllMenus();
+    var v=document.getElementById('senderVal');v.textContent=s;v.classList.remove('is-ph');
+    var t=document.getElementById('templateVal');t.textContent='Select a template';t.classList.add('is-ph');}
+  function toggleTemplateMenu(e){e.stopPropagation();var m=document.getElementById('templateMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
+    if(!window._sender){toast('info','Select a sender first');return;}
+    var items=(SENDER_TEMPLATES[window._sender]||[]).map(function(t){return '<button class="menu__item" onclick="pickTemplate(this.textContent)">'+t+'</button>';}).join('');m.innerHTML=items;var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  function pickTemplate(t){window._template=t;closeAllMenus();var v=document.getElementById('templateVal');v.textContent=t;v.classList.remove('is-ph');}
   function revealCount(btn){var v=document.createElement('span');v.className='ap-pg-total__val';v.textContent='300';btn.replaceWith(v);}
   // Manage Keywords — match-type picker + add/remove rows
   function openMatchMenu(btn){event.stopPropagation();var m=document.getElementById('matchMenu');var wasOpen=m.classList.contains('is-open')&&window._matchTrigger===btn;var r=btn.getBoundingClientRect();closeAllMenus();if(wasOpen)return;window._matchTrigger=btn;m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
