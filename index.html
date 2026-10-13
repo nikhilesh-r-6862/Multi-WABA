@@ -426,10 +426,13 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
 .zc-dsel__item:hover{background:var(--surface-brand-subtle);color:var(--text-brand);}
 .zc-dsel__item.is-sel{background:var(--surface-selected);color:var(--text-brand);}
 /* info row (account summary inside a modal) */
-.wa-strip{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border-subtle);border-radius:var(--radius-xs);background:var(--surface-sunken);}
+/* DS Alert pattern: severity-filled 32×32 tile + white glyph, severity border + subtle bg */
+.wa-strip{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border-subtle);border-radius:var(--radius-s);background:var(--surface-sunken);}
 .wa-strip--warn{border-color:var(--border-warning);background:var(--surface-warning-subtle);}
 .wa-strip--err{border-color:var(--border-error);background:var(--surface-error-subtle);}
-.wa-strip__icon{width:32px;height:32px;border-radius:var(--radius-xs);background:var(--surface-success-subtle);display:flex;align-items:center;justify-content:center;color:var(--success-solid);flex-shrink:0;}
+.wa-strip__icon{width:32px;height:32px;border-radius:var(--radius-xs);background:var(--surface-brand-subtle);display:flex;align-items:center;justify-content:center;color:var(--text-brand);flex-shrink:0;}
+.wa-strip--warn .wa-strip__icon{background:var(--icon-warning);color:#fff;}
+.wa-strip--err .wa-strip__icon{background:var(--icon-error);color:#fff;}
 .wa-strip__icon svg{width:18px;height:18px;}
 .wa-strip__name{font:500 14px/1.3 var(--font-family);color:var(--text-primary);}
 .wa-strip__meta{font:400 12.5px/1.3 var(--font-family);color:var(--text-tertiary);margin-top:1px;}
@@ -1048,7 +1051,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
     <div class="zc-modal__header"><div class="zc-modal__title">Assign your accounts to workspaces</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimTransition')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
     <div class="zc-modal__body">
       <p>You've enabled Workspaces. You have <strong>8 connected WhatsApp Business Accounts</strong> — each workspace can have at most one. They are now <strong>Unassigned</strong>; link each to a workspace to keep using it.</p>
-      <div class="wa-strip wa-strip--warn"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-alert-circle"/></svg></div><div><div class="wa-strip__name">8 accounts need assignment</div><div class="wa-strip__meta">Campaigns on unassigned accounts are paused until they're linked.</div></div></div>
+      <div class="wa-strip wa-strip--warn"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-alert-triangle"/></svg></div><div><div class="wa-strip__name">8 accounts need assignment</div><div class="wa-strip__meta">Campaigns on unassigned accounts are paused until they're linked.</div></div></div>
     </div>
     <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="closeScrim('scrimTransition');go('apps')">Review accounts</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimTransition')">Later</button></div>
   </div>
@@ -1060,7 +1063,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
     <div class="zc-modal__header"><div class="zc-modal__title">Link the existing account first</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimBlocked')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
     <div class="zc-modal__body">
       <p>You have a WhatsApp Business Account that isn't linked to a workspace yet. Link it to a workspace before adding another account.</p>
-      <div class="wa-strip wa-strip--warn"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-whatsapp"/></svg></div><div><div class="wa-strip__name">Acme Dealer WABA</div><div class="wa-strip__meta">Unassigned</div></div></div>
+      <div class="wa-strip"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-whatsapp"/></svg></div><div><div class="wa-strip__name">Acme Dealer WABA</div><div class="wa-strip__meta">Unassigned</div></div></div>
     </div>
     <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="closeScrim('scrimBlocked')">Link now</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimBlocked')">Cancel</button></div>
   </div>
