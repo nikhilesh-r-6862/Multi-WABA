@@ -164,6 +164,12 @@ body{background:var(--surface-frame-bg);color:var(--text-primary);}
 .menu__section{padding:7px 12px 3px;font:500 12px/1.3 var(--font-family);color:var(--text-tertiary);}
 .menu__section + .menu__item{padding-left:12px;}
 .menu__item--sub{color:var(--text-secondary);}
+.menu__item.is-disabled{color:var(--text-disabled);cursor:default;}
+.menu__item.is-disabled:hover{background:none;color:var(--text-disabled);}
+.menu__item--sender{justify-content:space-between;gap:24px;}
+.menu__item--sender .snd-num{color:var(--text-tertiary);font-variant-numeric:tabular-nums;}
+.org-ws-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.org-ws-chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:var(--radius-full);background:var(--surface-brand-subtle);color:var(--text-brand);font:500 12px/1.4 var(--font-family);}
 
 /* apps header + cards */
 .apps-header{display:flex;align-items:center;justify-content:space-between;gap:16px;}
@@ -237,6 +243,8 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
 .pref-input{height:38px;width:320px;max-width:100%;padding:0 12px;border:1px solid var(--input-border);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text-primary);font:400 14px/1 var(--font-family);margin-top:4px;}
 .pref-input:hover{border-color:var(--border-strong);}
 .pref-input:focus{outline:none;border-color:var(--border-focus);box-shadow:0 0 0 3px var(--focus-ring);}
+.pref-sub{margin-top:14px;}
+.pref-sub__label{display:block;font:500 13px/1.3 var(--font-family);color:var(--text-primary);margin-bottom:2px;}
 .pref-manage{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-top:16px;background:none;border:none;padding:0;cursor:pointer;font:500 14px/1 var(--font-family);color:var(--text-link);}
 .pref-manage svg{width:16px;height:16px;}
 .pref-manage:hover{color:var(--text-link-hover);}
@@ -367,9 +375,9 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
 .ap-ws:hover{color:var(--text-link-hover);}
 .ap-ws--link{color:var(--text-link);font-weight:500;}
 .ap-ws--link svg{color:var(--text-link);}
+.ap-ws-ro{display:inline-flex;align-items:center;font:400 14px/1.3 var(--font-family);color:var(--text-primary);}
 .ap-ws-more{margin-left:6px;padding:1px 7px;border-radius:var(--radius-full);background:var(--surface-sunken);color:var(--text-secondary);font:500 12px/1.4 var(--font-family);}
-.ap-unassigned{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:var(--radius-full);background:var(--surface-warning-subtle);color:var(--text-warning);font:500 12px/1.3 var(--font-family);border:none;cursor:pointer;}
-.ap-unassigned:hover{text-decoration:underline;}
+.ap-unassigned{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:var(--radius-full);background:var(--surface-warning-subtle);color:var(--text-warning);font:500 12px/1.3 var(--font-family);border:none;}
 .ap-unassigned::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--icon-warning);flex-shrink:0;}
 /* permitted phone-number checklist + review summary (Link modal) */
 .lk-field{margin-bottom:16px;}
@@ -648,6 +656,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                 <div class="apps-apptitle__name">WhatsApp</div>
               </div>
               <div class="sp-section__actions">
+                <button class="sp-btn sp-btn--secondary" onclick="openTemplate()">New template</button>
                 <button class="sp-btn sp-btn--primary" onclick="openSender()"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Create Campaign</button>
                 <div class="menu-wrap">
                   <button class="sp-btn sp-btn--tertiary sp-btn--icon" aria-label="More options" onclick="toggleMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button>
@@ -676,7 +685,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">122103562760008817</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Apr 27, 2026<span class="ap-conn-by">by Priya Nair</span></td>
-                  <td class="p2-only"><button class="ap-ws" data-midsend="1" data-ws="North Region Dealers|Metro Retail" onclick="openManage(event)">North Region Dealers<span class="ap-ws-more">+1</span></button></td>
+                  <td class="p2-only"><span class="ap-ws-ro" data-midsend="1" data-ws="North Region Dealers|Metro Retail">North Region Dealers<span class="ap-ws-more">+1</span></span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr class="is-unlinked">
@@ -684,7 +693,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">109882340022117</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Sep 10, 2026<span class="ap-conn-by">by Rahul Verma</span></td>
-                  <td class="p2-only"><button class="ap-unassigned" onclick="openLink(event)">Unassigned</button></td>
+                  <td class="p2-only"><span class="ap-unassigned">Unassigned</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
@@ -692,7 +701,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">338812004471560</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Aug 02, 2026<span class="ap-conn-by">by Anita Desai</span></td>
-                  <td class="p2-only"><button class="ap-ws" data-ws="Metro Retail" onclick="openManage(event)">Metro Retail<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><span class="ap-ws-ro" data-ws="Metro Retail">Metro Retail</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
@@ -700,7 +709,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">338812004472014</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Jul 19, 2026<span class="ap-conn-by">by Priya Nair</span></td>
-                  <td class="p2-only"><button class="ap-ws" data-ws="South Region Dealers" onclick="openManage(event)">South Region Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><span class="ap-ws-ro" data-ws="South Region Dealers">South Region Dealers</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
@@ -708,7 +717,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">338812004472190</td>
                   <td><span class="ap-status ap-status--pending">Pending</span></td>
                   <td>Jun 30, 2026<span class="ap-conn-by">by Karan Mehta</span></td>
-                  <td class="p2-only"><button class="ap-ws" data-ws="East Region Dealers" onclick="openManage(event)">East Region Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><span class="ap-ws-ro" data-ws="East Region Dealers">East Region Dealers</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr class="is-unlinked">
@@ -716,7 +725,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">338812004472663</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>Jun 12, 2026<span class="ap-conn-by">by Anita Desai</span></td>
-                  <td class="p2-only"><button class="ap-unassigned" onclick="openLink(event)">Unassigned</button></td>
+                  <td class="p2-only"><span class="ap-unassigned">Unassigned</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr>
@@ -724,7 +733,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">338812004473001</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>May 28, 2026<span class="ap-conn-by">by Rahul Verma</span></td>
-                  <td class="p2-only"><button class="ap-ws" data-ws="Harbor Dealers" onclick="openManage(event)">Harbor Dealers<svg aria-hidden="true"><use href="#zc-caret"/></svg></button></td>
+                  <td class="p2-only"><span class="ap-ws-ro" data-ws="Harbor Dealers">Harbor Dealers</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
                 <tr class="is-unlinked">
@@ -732,7 +741,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
                   <td class="p1-only">338812004473248</td>
                   <td><span class="ap-status ap-status--ok">Approved</span></td>
                   <td>May 05, 2026<span class="ap-conn-by">by Karan Mehta</span></td>
-                  <td class="p2-only"><button class="ap-unassigned" onclick="openLink(event)">Unassigned</button></td>
+                  <td class="p2-only"><span class="ap-unassigned">Unassigned</span></td>
                   <td class="ap-actions-cell"><button class="ap-actions-btn" aria-label="More options" onclick="openRowMenu(event)"><svg aria-hidden="true"><use href="#zc-more"/></svg></button></td>
                 </tr>
               </tbody>
@@ -758,6 +767,7 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
           <div class="sp-ptopbar__title">Overview</div>
           <div class="sp-ptopbar__actions">
             <span class="ws-switch ws-switch--topbar p2-only"><button class="ws-switch__trigger" onclick="toggleWsMenu(event)"><span class="ws-switch__label">Workspace:</span><span class="ws-cur-name">North Region Dealers</span><svg aria-hidden="true"><use href="#zc-caret"/></svg></button><div class="ws-switch__menu"><button class="ws-switch__item ws-switch__item--sel" onclick="switchWs('North Region Dealers',true)">North Region Dealers</button><button class="ws-switch__item" onclick="switchWs('West Region Dealers',false)">West Region Dealers</button><div class="ws-switch__sep"></div><button class="ws-switch__item ws-switch__item--create" onclick="closeAllMenus();openScrim('scrimWsCreate')"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Create workspace</button></div></span>
+            <button class="sp-btn sp-btn--secondary p2-only sa-only" onclick="openOrgLinks()">Manage WABA links</button>
             <button class="sp-btn sp-btn--secondary">View credits</button>
           </div>
         </div>
@@ -818,13 +828,20 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
           <div class="ctx-banner pref-ro-only" style="justify-content:flex-start;gap:8px;margin:16px 20px 0;"><svg aria-hidden="true" style="width:16px;height:16px;flex-shrink:0"><use href="#zc-lock"/></svg>These settings are organisation-wide and managed by your Super Admin. They're read-only here.</div>
           <section class="sp-section">
             <div class="pref-block">
-              <div class="pref-block__title">Opt-in and opt-out keywords</div>
-              <div class="pref-block__desc">A contact is automatically opted in or out when they reply with one of these keywords.</div>
-              <div class="kw-groups">
-                <div class="kw-group"><span class="kw-group__label">Opt-in</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">START<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">SUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">YES<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" aria-label="Add opt-in keyword" onclick="openKeywords('in')"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button></div></div>
-                <div class="kw-group"><span class="kw-group__label">Opt-out</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">STOP<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">STOPALL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">UNSUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">CANCEL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" aria-label="Add opt-out keyword" onclick="openKeywords('out')"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button></div></div>
-              </div>
-              <button class="pref-manage" onclick="openKeywords()"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage</button>
+              <div class="pref-block__title">Opt-in keywords and message</div>
+              <div class="pref-block__desc">Keywords a contact can reply to opt in, and the default reply they receive.</div>
+              <div class="kw-group"><span class="kw-group__label">Opt-in keywords</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">START<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">SUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">YES<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" aria-label="Add opt-in keyword" onclick="openKeywords('in')"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button></div></div>
+              <div class="pref-sub"><label class="pref-sub__label">Default opt-in message</label><input class="pref-input" type="text" value="You're subscribed to updates. Reply STOP any time to opt out."></div>
+              <button class="pref-manage" onclick="openKeywords('in')"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage keywords</button>
+            </div>
+          </section>
+          <section class="sp-section">
+            <div class="pref-block">
+              <div class="pref-block__title">Opt-out keywords and message</div>
+              <div class="pref-block__desc">Keywords a contact can reply to opt out, and the default reply they receive.</div>
+              <div class="kw-group"><span class="kw-group__label">Opt-out keywords</span><div class="kw-chips"><span class="zc-tag zc-tag--dismissible">STOP<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">STOPALL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">UNSUBSCRIBE<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><span class="zc-tag zc-tag--dismissible">CANCEL<button class="zc-tag__close" aria-label="Remove keyword" onclick="removeChip(this)"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></span><button class="kw-addchip" aria-label="Add opt-out keyword" onclick="openKeywords('out')"><svg aria-hidden="true"><use href="#zc-plus"/></svg></button></div></div>
+              <div class="pref-sub"><label class="pref-sub__label">Default opt-out message</label><input class="pref-input" type="text" value="You've unsubscribed. Reply START to opt back in."></div>
+              <button class="pref-manage" onclick="openKeywords('out')"><svg aria-hidden="true"><use href="#zc-settings"/></svg>Manage keywords</button>
             </div>
           </section>
           <section class="sp-section">
@@ -1035,8 +1052,6 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
 </div>
 
 <div class="menu" id="rowMenu" style="position:fixed;top:auto;right:auto;">
-  <button class="menu__item" onclick="rowLink()">Link to workspace</button>
-  <button class="menu__item" onclick="rowManage()">Manage workspace links</button>
   <button class="menu__item" onclick="rowDisconnect()">Disconnect account</button>
 </div>
 
@@ -1116,23 +1131,16 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
   <div class="zc-modal" role="dialog" aria-modal="true">
     <div class="zc-modal__header"><div class="zc-modal__title" id="linkTitle">Link to workspace</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimLink')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
     <div class="zc-modal__body">
-      <div class="lk-field"><span class="lk-field__label">Account</span><div class="wa-strip"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-whatsapp"/></svg></div><div><div class="wa-strip__name" id="linkAcc">—</div><div class="wa-strip__meta" id="linkAccMeta">Connected · Approved</div></div></div></div>
+      <div class="lk-field"><span class="lk-field__label">WhatsApp Business Account</span><div class="wa-strip"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-whatsapp"/></svg></div><div><div class="wa-strip__name" id="linkAcc">—</div><div class="wa-strip__meta" id="linkAccMeta">The whole WABA is linked — all its eligible phone numbers become available to the workspace.</div></div></div></div>
       <div class="lk-field"><span class="lk-field__label">Workspace</span>
         <div class="zc-dsel"><button type="button" class="zc-dsel__trigger" onclick="toggleLinkWsMenu(event)"><span id="linkWsVal" class="is-ph">Select a workspace</span><svg class="zc-dsel__caret" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
       </div>
-      <div class="lk-field"><span class="lk-field__label">Permitted phone numbers</span>
-        <div class="lk-phones" id="linkPhones">
-          <label class="lk-phone"><input type="checkbox" checked onchange="updateLinkSummary()"><span>+1 208 352 2602 — Primary</span></label>
-          <label class="lk-phone"><input type="checkbox" onchange="updateLinkSummary()"><span>+1 415 555 0132 — Support</span></label>
-          <label class="lk-phone"><input type="checkbox" onchange="updateLinkSummary()"><span>+1 617 555 0144 — Sales</span></label>
-        </div>
-      </div>
-      <div class="wa-strip wa-strip--warn" id="linkShareWarn" style="display:none;"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-alert-triangle"/></svg></div><div><div class="wa-strip__name">This account will be shared</div><div class="wa-strip__meta" id="linkShareMeta">Already used by another workspace. Sharing adds access without removing existing links. Templates belong to the account and may appear across linked workspaces; disconnecting affects every linked workspace. A shared number can create overlapping Inbox visibility.</div></div></div>
+      <div class="wa-strip wa-strip--warn" id="linkShareWarn" style="display:none;"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-alert-triangle"/></svg></div><div><div class="wa-strip__name">This account will be shared</div><div class="wa-strip__meta" id="linkShareMeta">This WABA is already linked to another workspace. Sharing adds access without removing existing links. Every eligible phone number and WABA template becomes available in the new workspace; disconnecting affects every linked workspace. A shared contact may create overlapping Inbox visibility.</div></div></div>
       <div class="lk-field"><span class="lk-field__label">Review</span>
         <div class="lk-summary">
           <div class="lk-summary__row"><span>Account</span><strong id="sumAcc">—</strong></div>
           <div class="lk-summary__row"><span>Workspace</span><strong id="sumWs">—</strong></div>
-          <div class="lk-summary__row"><span>Permitted numbers</span><strong id="sumNums">1 selected</strong></div>
+          <div class="lk-summary__row"><span>Scope</span><strong>Entire WABA (all eligible numbers)</strong></div>
           <div class="lk-summary__row"><span>Access</span><strong id="sumMode">New link</strong></div>
         </div>
       </div>
@@ -1150,6 +1158,48 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
       <div id="manageList"><!-- rows injected --></div>
     </div>
     <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="closeScrim('scrimManage');openLinkFor(window._manageAcc)"><svg aria-hidden="true"><use href="#zc-plus"/></svg>Link to another workspace</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimManage')">Done</button></div>
+  </div>
+</div>
+
+<!-- MODAL: all-workspaces WABA management context (v6 §4.2 — Overview-only link/unlink surface) -->
+<div class="zc-scrim" id="scrimOrgLinks">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">Manage WABA links</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimOrgLinks')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <p>Link whole WhatsApp Business Accounts to workspaces, or unlink them. Linking never selects individual phone numbers — the entire WABA's eligible numbers become available to the workspace.</p>
+      <div id="orgLinksList"><!-- rows injected --></div>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimOrgLinks')">Done</button></div>
+  </div>
+</div>
+
+<!-- MODAL: template creation & approval (v6 §6 — representative; lives in the template editor in production) -->
+<div class="zc-scrim" id="scrimTemplate">
+  <div class="zc-modal" role="dialog" aria-modal="true">
+    <div class="zc-modal__header"><div class="zc-modal__title">New WhatsApp template</div><button class="zc-modal__close" aria-label="Close" onclick="closeScrim('scrimTemplate')"><svg aria-hidden="true"><use href="#zc-clear"/></svg></button></div>
+    <div class="zc-modal__body">
+      <div class="lk-field"><span class="lk-field__label">Originating workspace</span>
+        <div class="zc-dsel"><button type="button" class="zc-dsel__trigger" onclick="toggleTplWsMenu(event)"><span id="tplWsVal" class="is-ph">Select a workspace</span><svg class="zc-dsel__caret" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      </div>
+      <div class="lk-field"><span class="lk-field__label">WhatsApp Business Account (owns the template)</span>
+        <div class="zc-dsel"><button type="button" class="zc-dsel__trigger" onclick="toggleTplWabaMenu(event)"><span id="tplWabaVal" class="is-ph">Select a linked WABA</span><svg class="zc-dsel__caret" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+        <div class="zc-helper" id="tplWabaHelp" style="display:none;">Only WABAs linked to the selected workspace are shown. Unassigned WABAs can't be used for submission.</div>
+      </div>
+      <div class="lk-field"><span class="lk-field__label">Template name</span><input class="pref-input" id="tplName" type="text" value="order_update_v2" style="width:100%"></div>
+      <div class="lk-field"><span class="lk-field__label">Category</span>
+        <div class="zc-dsel"><button type="button" class="zc-dsel__trigger" onclick="toggleTplCatMenu(event)"><span id="tplCatVal">Utility</span><svg class="zc-dsel__caret" aria-hidden="true"><use href="#zc-caret"/></svg></button></div>
+      </div>
+      <div class="lk-field"><span class="lk-field__label">Review</span>
+        <div class="lk-summary">
+          <div class="lk-summary__row"><span>Created from workspace</span><strong id="tplSumWs">—</strong></div>
+          <div class="lk-summary__row"><span>Template belongs to WABA</span><strong id="tplSumWaba">—</strong></div>
+          <div class="lk-summary__row"><span>Visible to workspaces</span><strong id="tplSumVisible">—</strong></div>
+          <div class="lk-summary__row"><span>Status after submit</span><strong>Pending approval</strong></div>
+        </div>
+      </div>
+      <div class="wa-strip"><div class="wa-strip__icon"><svg aria-hidden="true"><use href="#zc-info"/></svg></div><div><div class="wa-strip__name">Template belongs to the WABA, not the workspace</div><div class="wa-strip__meta">Every workspace linked to this WABA may see and use it once approved. It stays Pending and can't be sent until approved.</div></div></div>
+    </div>
+    <div class="zc-modal__footer"><button class="sp-btn sp-btn--primary" onclick="submitTemplate()">Submit for approval</button><button class="sp-btn sp-btn--tertiary" onclick="closeScrim('scrimTemplate')">Cancel</button></div>
   </div>
 </div>
 
@@ -1200,6 +1250,9 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
 <div class="menu" id="senderMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
 <div class="menu" id="templateMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
 <div class="menu" id="linkWsMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
+<div class="menu" id="tplWsMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
+<div class="menu" id="tplWabaMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
+<div class="menu" id="tplCatMenu" style="position:fixed;top:auto;right:auto;z-index:8000;"></div>
 
 <!-- PROTOTYPE controls (not product UI): switch experience + role to demo PRD v4 states -->
 <div class="proto-bar">
@@ -1234,6 +1287,8 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
     });
     document.querySelectorAll('#screen-preferences .pref-input').forEach(function(i){i.disabled=ro;});
     document.querySelectorAll('#screen-preferences .pref-manage,#screen-preferences .kw-addchip,#screen-preferences .zc-tag__close').forEach(function(b){b.style.display=ro?'none':'';});
+    // Super-Admin-only controls (e.g. Overview "Manage WABA links") hidden for Workspace Admin — read-only (§4.2)
+    document.querySelectorAll('.sa-only').forEach(function(b){b.style.display=ro?'none':'';});
   }
   var SCREENS={
     'apps':{acc:'accIntegrations',nav:'navApps'},
@@ -1266,100 +1321,111 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
   function closeScrim(id){document.getElementById(id).classList.remove('is-open');}
   var CARET='<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
   function closeAllMenus(){
-    ['appsMenu','rowMenu','cellWsMenu','matchMenu','accMenu','senderMenu','templateMenu','linkWsMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
+    ['appsMenu','rowMenu','cellWsMenu','matchMenu','accMenu','senderMenu','templateMenu','linkWsMenu','tplWsMenu','tplWabaMenu','tplCatMenu'].forEach(function(id){var m=document.getElementById(id); if(m)m.classList.remove('is-open');});
     document.querySelectorAll('.ap-actions-btn.is-pinned').forEach(function(b){b.classList.remove('is-pinned');});
     document.querySelectorAll('.ws-switch__menu.is-open').forEach(function(m){m.classList.remove('is-open');});
   }
   function openRowMenu(e){e.stopPropagation();var btn=e.currentTarget;window._menuRow=btn.closest('tr');var m=document.getElementById('rowMenu');var r=btn.getBoundingClientRect();closeAllMenus();btn.classList.add('is-pinned');m.style.left=(r.right-220)+'px';m.style.top=(r.bottom+4)+'px';m.classList.add('is-open');}
   function rowAcc(){var row=window._menuRow;return row?row.querySelector('.ap-name__t').textContent.trim():'this account';}
-  function rowLink(){var row=window._menuRow;closeAllMenus();openLinkFor(rowAcc(),row);}
-  function rowManage(){var row=window._menuRow;closeAllMenus();if(row){var cell=row.querySelector('.ap-ws,.ap-unassigned');openManageFor(rowAcc(),cell&&cell.dataset?cell.dataset.ws:'',cell);}else{openManageFor(rowAcc(),'');}}
   function rowDisconnect(){closeAllMenus();document.getElementById('discAcc').textContent=rowAcc();pickDisc('A');openScrim('scrimDisconnect');}
-  // v4 §3/§6.4/§19.4 — adding an account is never blocked by unassigned accounts
+  // adding an account is never blocked by unassigned accounts (v6 §4.1). Linking happens on Overview, not here.
   function addAccount(){
     closeAllMenus();
     toast('success', document.body.dataset.phase==='2'
-      ? 'WhatsApp Business Account connected. Link it to a workspace from the Linked Workspace column when you’re ready.'
+      ? 'WhatsApp Business Account connected. Go to WhatsApp → Overview to link it to a workspace.'
       : 'WhatsApp Business Account connected.');
   }
-  // ===== Link / share flow (v4 §9.1) =====
+  // ===== Shared state: read the Integrations table as the source of truth for links =====
   var WORKSPACES=['North Region Dealers','South Region Dealers','East Region Dealers','West Region Dealers','Central Operations','Metro Retail','Coastal Retail'];
-  function openLink(e){e.stopPropagation();var row=e.currentTarget.closest('tr');openLinkFor(row.querySelector('.ap-name__t').textContent.trim(),row);}
-  function openLinkFor(acc,row){
-    window._linkAcc=acc; window._linkRow=row||null; window._linkWs='';
-    document.getElementById('linkTitle').textContent='Link to workspace';
+  var SHARED_WS={'North Region Dealers':1,'Metro Retail':1}; // workspaces already using the demo shared account
+  function findApRow(acc){var t=[...document.querySelectorAll('.ap-table .ap-name__t')].find(function(n){return n.textContent.trim()===acc;});return t?t.closest('tr'):null;}
+  function apCell(acc){var r=findApRow(acc);return r?r.querySelector('.p2-only .ap-ws-ro, .p2-only .ap-unassigned'):null;}
+  function cellList(cell){return cell&&cell.dataset&&cell.dataset.ws?cell.dataset.ws.split('|').filter(Boolean):[];}
+  function renderWsCell(cell,list){ if(!cell)return; var tr=cell.closest('tr');
+    if(!list.length){cell.className='ap-unassigned';cell.removeAttribute('data-ws');cell.textContent='Unassigned';if(tr)tr.classList.add('is-unlinked');}
+    else{cell.className='ap-ws-ro';cell.dataset.ws=list.join('|');cell.innerHTML=list[0]+(list.length>1?'<span class="ap-ws-more">+'+(list.length-1)+'</span>':'');if(tr)tr.classList.remove('is-unlinked');}
+  }
+  // ===== Link / share flow (v6 §7 — WABA-level only, no phone-number selection) =====
+  function openLinkFor(acc){
+    window._linkAcc=acc; window._linkWs='';
+    document.getElementById('linkTitle').textContent='Link WABA to workspace';
     document.getElementById('linkAcc').textContent=acc;
     var v=document.getElementById('linkWsVal'); v.textContent='Select a workspace'; v.classList.add('is-ph');
-    document.querySelectorAll('#linkPhones input').forEach(function(c,i){c.checked=i===0;});
     document.getElementById('linkShareWarn').style.display='none';
     updateLinkSummary(); openScrim('scrimLink');
   }
   function toggleLinkWsMenu(e){e.stopPropagation();var m=document.getElementById('linkWsMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
-    m.innerHTML=WORKSPACES.map(function(w){return '<button class="menu__item" onclick="pickLinkWs(this.textContent)">'+w+'</button>';}).join('');
+    var current=cellList(apCell(window._linkAcc));
+    m.innerHTML=WORKSPACES.map(function(w){var on=current.indexOf(w)>-1;return '<button class="menu__item'+(on?' is-disabled':'')+'"'+(on?' disabled':' onclick="pickLinkWs(this.textContent.trim())"')+'>'+w+(on?' <span class="ap-ws-more">linked</span>':'')+'</button>';}).join('');
     var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
-  // workspaces that already use the demo shared account
-  var SHARED_WS={'North Region Dealers':1,'Metro Retail':1};
   function pickLinkWs(w){window._linkWs=w;closeAllMenus();var v=document.getElementById('linkWsVal');v.textContent=w;v.classList.remove('is-ph');
-    var shared=!!SHARED_WS[w]&&w!==window._linkWsCurrent;
-    var warn=document.getElementById('linkShareWarn');warn.style.display=shared?'':'none';
-    if(shared)document.getElementById('linkShareMeta').textContent='Already used by other workspaces (e.g. North Region Dealers). Sharing adds access without removing existing links. Templates belong to the account and may appear across linked workspaces; disconnecting affects every linked workspace. A shared number can create overlapping Inbox visibility.';
+    var alreadyLinked=cellList(apCell(window._linkAcc)).length>0; // sharing = this WABA is already linked somewhere
+    document.getElementById('linkShareWarn').style.display=alreadyLinked?'':'none';
     updateLinkSummary();}
   function updateLinkSummary(){
     document.getElementById('sumAcc').textContent=window._linkAcc||'—';
     document.getElementById('sumWs').textContent=window._linkWs||'—';
-    var n=document.querySelectorAll('#linkPhones input:checked').length;
-    document.getElementById('sumNums').textContent=n+' selected';
-    var shared=!!SHARED_WS[window._linkWs];
-    document.getElementById('sumMode').textContent=shared?'Shared access (additive)':'New link';
-    document.getElementById('linkConfirm').textContent=shared?'Confirm share':'Confirm link';
+    var alreadyLinked=cellList(apCell(window._linkAcc)).length>0;
+    document.getElementById('sumMode').textContent=alreadyLinked?'Shared access (additive)':'New link';
+    document.getElementById('linkConfirm').textContent=alreadyLinked?'Confirm share':'Confirm link';
   }
   function confirmLink(){
-    var acc=window._linkAcc,ws=window._linkWs,row=window._linkRow;
+    var acc=window._linkAcc,ws=window._linkWs;
     if(!ws){toast('info','Select a workspace first');return;}
     closeScrim('scrimLink');
-    if(row){var cell=row.querySelector('.ap-unassigned,.ap-ws');
-      if(cell){cell.className='ap-ws';cell.dataset.ws=ws;cell.setAttribute('onclick','openManage(event)');
-        cell.innerHTML=ws+'<svg aria-hidden="true"><use href="#zc-caret"/></svg>';}
-      row.classList.remove('is-unlinked');}
-    toast('success', SHARED_WS[ws]?(acc+' shared with '+ws):(acc+' linked to '+ws));
+    var cell=apCell(acc),list=cellList(cell);
+    var shared=list.length>0;
+    if(list.indexOf(ws)<0)list.push(ws); renderWsCell(cell,list);
+    toast('success', shared?(acc+' shared with '+ws):(acc+' linked to '+ws));
+    if(document.getElementById('scrimOrgLinks').classList.contains('is-open'))renderOrgLinks();
   }
-  // ===== Manage workspace links (v4 §6.3) =====
-  function openManage(e){e.stopPropagation();var btn=e.currentTarget;openManageFor(btn.closest('tr').querySelector('.ap-name__t').textContent.trim(),btn.dataset.ws||'',btn);}
-  function openManageFor(acc,wsStr,cell){
-    window._manageAcc=acc; window._manageCell=cell||null;
-    var list=(wsStr||'').split('|').filter(Boolean);
+  // ===== Manage workspace links for one WABA (v6 §4.2 — no number picker) =====
+  function openManageFor(acc){
+    window._manageAcc=acc;
+    var cell=apCell(acc),list=cellList(cell);
     document.getElementById('manageAcc').textContent=acc;
     document.getElementById('manageMeta').textContent=list.length?('Linked to '+list.length+' workspace'+(list.length>1?'s':'')):'Not linked to any workspace';
     var midsend=cell&&cell.dataset&&cell.dataset.midsend==='1';
     document.getElementById('manageList').innerHTML=list.map(function(w,i){
-      return '<div class="ml-row"><div><div class="ml-row__name">'+w+'</div><div class="ml-row__meta">'+(midsend&&i===0?'A campaign is sending now':'2 permitted numbers')+'</div></div>'
-        +'<div class="ml-row__actions"><button class="sp-btn sp-btn--tertiary" onclick="manageNumbers(\''+w+'\')">Numbers</button>'
-        +'<button class="sp-btn sp-btn--tertiary" onclick="manageUnlink(\''+w+'\','+(midsend&&i===0?'true':'false')+')">Unlink</button></div></div>';
+      return '<div class="ml-row"><div><div class="ml-row__name">'+w+'</div><div class="ml-row__meta">'+(midsend&&i===0?'A campaign is sending now':'Eligible numbers available to this workspace')+'</div></div>'
+        +'<div class="ml-row__actions"><button class="sp-btn sp-btn--tertiary" onclick="manageUnlink(\''+w+'\','+(midsend&&i===0?'true':'false')+')">Unlink</button></div></div>';
     }).join('')||'<div class="ml-row__meta" style="padding:8px 0;">No workspace links yet. Use “Link to another workspace” below.</div>';
     openScrim('scrimManage');
   }
-  function manageNumbers(w){toast('info','Manage permitted numbers for '+w+' (not built in this prototype)');}
   function manageUnlink(w,midsend){
     closeScrim('scrimManage');
     if(midsend){document.getElementById('midsendWs').textContent=w;openScrim('scrimMidsend');return;}
-    window._impactMode='unlink'; window._impactWs=w; window._impactCell=window._manageCell;
-    document.getElementById('impactTitle').textContent='Unlink from this workspace';
-    document.getElementById('impactLede').innerHTML='Unlinking <strong>'+window._manageAcc+'</strong> from <strong>'+w+'</strong> removes only this workspace’s access. The account stays connected and any other workspaces keep their access. These items in <strong>'+w+'</strong> are affected:';
+    window._impactMode='unlink'; window._impactWs=w;
+    document.getElementById('impactTitle').textContent='Unlink WABA from this workspace';
+    document.getElementById('impactLede').innerHTML='Unlinking <strong>'+window._manageAcc+'</strong> from <strong>'+w+'</strong> removes the whole WABA\u2019s access from this workspace (all its numbers). The account stays connected and any other workspaces keep their access. These items in <strong>'+w+'</strong> are affected:';
     openScrim('scrimImpact');
   }
   function confirmImpact(){
     closeScrim('scrimImpact');
-    var w=window._impactWs,cell=window._impactCell;
-    if(window._impactMode==='move'){            // explicit move (SMS inline relink): unlink source + link destination
-      if(cell)cell.innerHTML=window._moveTo+'<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
+    if(window._impactMode==='move'){            // SMS gateways inline relink = explicit move
+      if(window._impactCell)window._impactCell.innerHTML=window._moveTo+'<svg aria-hidden="true"><use href="#zc-caret"/></svg>';
       toast('success','Moved '+window._manageAcc+' to '+window._moveTo); return;
     }
-    if(cell&&cell.dataset){ // unlink — remove this workspace from the cell's data-ws list
-      var left=(cell.dataset.ws||'').split('|').filter(function(x){return x&&x!==w;});
-      if(left.length){cell.dataset.ws=left.join('|');cell.innerHTML=left[0]+(left.length>1?'<span class="ap-ws-more">+'+(left.length-1)+'</span>':'<svg aria-hidden="true"><use href="#zc-caret"/></svg>');}
-      else{cell.className='ap-unassigned';cell.removeAttribute('data-ws');cell.setAttribute('onclick','openLink(event)');cell.textContent='Unassigned';var tr=cell.closest('tr');if(tr)tr.classList.add('is-unlinked');}
-    }
+    var w=window._impactWs,cell=apCell(window._manageAcc);
+    var left=cellList(cell).filter(function(x){return x!==w;});
+    renderWsCell(cell,left);
     toast('success','Unlinked '+window._manageAcc+' from '+w);
+    if(document.getElementById('scrimOrgLinks').classList.contains('is-open'))renderOrgLinks();
+  }
+  // ===== Overview: Super-Admin all-workspaces management context (v6 §4.2) =====
+  function openOrgLinks(){closeAllMenus();renderOrgLinks();openScrim('scrimOrgLinks');}
+  function renderOrgLinks(){
+    var rows=[...document.querySelectorAll('.ap-table tbody tr')];
+    document.getElementById('orgLinksList').innerHTML=rows.map(function(tr){
+      var acc=tr.querySelector('.ap-name__t').textContent.trim();
+      var cell=tr.querySelector('.p2-only .ap-ws-ro, .p2-only .ap-unassigned');
+      var list=cellList(cell);
+      var chips=list.length?list.map(function(w){return '<span class="org-ws-chip">'+w+'</span>';}).join(''):'<span class="ap-unassigned">Unassigned</span>';
+      var action=list.length
+        ? '<button class="sp-btn sp-btn--tertiary" onclick="closeScrim(\'scrimOrgLinks\');openManageFor(\''+acc.replace(/'/g,"\\'")+'\')">Manage links</button>'
+        : '<button class="sp-btn sp-btn--tertiary" onclick="closeScrim(\'scrimOrgLinks\');openLinkFor(\''+acc.replace(/'/g,"\\'")+'\')">Link</button>';
+      return '<div class="ml-row"><div><div class="ml-row__name">'+acc+'</div><div class="org-ws-chips">'+chips+'</div></div><div class="ml-row__actions">'+action+'</div></div>';
+    }).join('');
   }
   // disconnect from organisation (v4 §14 — Allow & Cleanup / Restrict retained)
   function pickDisc(w){document.getElementById('discA').classList.toggle('is-selected',w==='A');document.getElementById('discB').classList.toggle('is-selected',w==='B');document.getElementById('discConfirm').textContent=w==='A'?'Allow & clean up':'Notify & restrict';window._disc=w;}
@@ -1403,11 +1469,11 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
     else if(m==='new')toast('success','Workspace created. Connect the account in Meta to finish linking.');
     else toast('success','Workspace created and linked to the selected account.');
   }
-  // Campaign creation — Sender grouped by WABA (§11), with Sender ↔ Template constraint
+  // Campaign creation — Sender grouped by WABA, each row = display name + number (v6 §5), with Sender ↔ Template constraint
   var SENDERS={
-    'Zoho Campaigns Local':{numbers:['+1 208 352 2602'],templates:['Welcome message','Order update']},
-    'Metro Retail WA':{numbers:['+1 415 555 0132','+1 415 555 0177'],templates:['Festive offer','Cart reminder']},
-    'Harbor Dealers WA':{numbers:['+1 617 555 0144'],templates:['Service reminder','Feedback request']}
+    'Marketing WABA':{numbers:[{name:'Acme Marketing',num:'+1 208 352 2602'},{name:'Acme Promotions',num:'+1 415 555 0192'}],templates:['Festive offer','Cart reminder']},
+    'Support WABA':{numbers:[{name:'Acme Support',num:'+1 650 555 0133'}],templates:['Welcome message','Order update']},
+    'Dealer WABA':{numbers:[{name:'Acme Dealer',num:'+1 617 555 0144'}],templates:['Service reminder','Feedback request']}
   };
   function openSender(){closeAllMenus();window._sender='';window._senderWaba='';window._template='';
     document.getElementById('senderVal').textContent='Select a sender';document.getElementById('senderVal').classList.add('is-ph');
@@ -1416,17 +1482,57 @@ body[data-role="super"] .pref-ro-only{display:none !important;}
   function toggleSenderMenu(e){e.stopPropagation();var m=document.getElementById('senderMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
     var html='';Object.keys(SENDERS).forEach(function(waba){
       html+='<div class="menu__section">'+waba+'</div>';
-      SENDERS[waba].numbers.forEach(function(num){
-        html+='<button class="menu__item menu__item--sub" onclick="pickSender(\''+waba+'\',\''+num+'\')">'+num+'</button>';
+      SENDERS[waba].numbers.forEach(function(s){
+        html+='<button class="menu__item menu__item--sender" onclick="pickSender(\''+waba+'\',\''+s.name+'\',\''+s.num+'\')"><span class="snd-name">'+s.name+'</span><span class="snd-num">'+s.num+'</span></button>';
       });
     });
     m.innerHTML=html;var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
-  function pickSender(waba,num){window._senderWaba=waba;window._sender=waba+' — '+num;window._template='';closeAllMenus();
+  function pickSender(waba,name,num){window._senderWaba=waba;window._sender=name+'  ·  '+num;window._template='';closeAllMenus();
     var v=document.getElementById('senderVal');v.textContent=window._sender;v.classList.remove('is-ph');
     var t=document.getElementById('templateVal');t.textContent='Select a template';t.classList.add('is-ph');}
   function toggleTemplateMenu(e){e.stopPropagation();var m=document.getElementById('templateMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
     if(!window._senderWaba){toast('info','Select a sender first');return;}
     var items=((SENDERS[window._senderWaba]||{}).templates||[]).map(function(t){return '<button class="menu__item" onclick="pickTemplate(this.textContent)">'+t+'</button>';}).join('');m.innerHTML=items;var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  // ===== Template creation & approval (v6 §6) — WABA filtered by originating workspace =====
+  var TPL_WORKSPACES=['North Region Dealers','Metro Retail','South Region Dealers','East Region Dealers','Harbor Dealers'];
+  // which WABAs are linked to each workspace (eligible for template submission); Unassigned WABAs excluded
+  var WS_WABAS={'North Region Dealers':['Zoho Campaigns Local'],'Metro Retail':['Zoho Campaigns Local','Metro Retail WA'],'South Region Dealers':['South Dealers WA'],'East Region Dealers':['East Dealers WA'],'Harbor Dealers':['Harbor Dealers WA']};
+  function openTemplate(){closeAllMenus();window._tplWs='';window._tplWaba='';
+    document.getElementById('tplWsVal').textContent='Select a workspace';document.getElementById('tplWsVal').classList.add('is-ph');
+    document.getElementById('tplWabaVal').textContent='Select a linked WABA';document.getElementById('tplWabaVal').classList.add('is-ph');
+    document.getElementById('tplWabaHelp').style.display='none';
+    updateTplSummary();openScrim('scrimTemplate');}
+  function toggleTplWsMenu(e){e.stopPropagation();var m=document.getElementById('tplWsMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
+    m.innerHTML=TPL_WORKSPACES.map(function(w){return '<button class="menu__item" onclick="pickTplWs(this.textContent)">'+w+'</button>';}).join('');
+    var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  function pickTplWs(w){window._tplWs=w;window._tplWaba='';closeAllMenus();
+    var v=document.getElementById('tplWsVal');v.textContent=w;v.classList.remove('is-ph');
+    var t=document.getElementById('tplWabaVal');t.textContent='Select a linked WABA';t.classList.add('is-ph');
+    document.getElementById('tplWabaHelp').style.display='';updateTplSummary();}
+  function toggleTplWabaMenu(e){e.stopPropagation();var m=document.getElementById('tplWabaMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
+    if(!window._tplWs){toast('info','Select an originating workspace first');return;}
+    var wabas=WS_WABAS[window._tplWs]||[];
+    m.innerHTML=wabas.length?wabas.map(function(wa){return '<button class="menu__item" onclick="pickTplWaba(this.textContent)">'+wa+'</button>';}).join('')
+      :'<div class="menu__item is-disabled">No linked WABA for this workspace</div>';
+    var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  function pickTplWaba(wa){window._tplWaba=wa;closeAllMenus();var v=document.getElementById('tplWabaVal');v.textContent=wa;v.classList.remove('is-ph');updateTplSummary();}
+  function toggleTplCatMenu(e){e.stopPropagation();var m=document.getElementById('tplCatMenu');var open=m.classList.contains('is-open');closeAllMenus();if(open)return;
+    m.innerHTML=['Marketing','Utility','Authentication'].map(function(c){return '<button class="menu__item" onclick="pickTplCat(this.textContent)">'+c+'</button>';}).join('');
+    var r=e.currentTarget.getBoundingClientRect();m.style.left=r.left+'px';m.style.top=(r.bottom+4)+'px';m.style.minWidth=r.width+'px';m.classList.add('is-open');}
+  function pickTplCat(c){closeAllMenus();document.getElementById('tplCatVal').textContent=c;}
+  function updateTplSummary(){
+    document.getElementById('tplSumWs').textContent=window._tplWs||'—';
+    document.getElementById('tplSumWaba').textContent=window._tplWaba||'—';
+    // every workspace linked to the chosen WABA may see/use the template
+    var vis='—';
+    if(window._tplWaba){var cell=apCell(window._tplWaba);var list=cellList(cell);vis=list.length?list.join(', '):(window._tplWs||'—');}
+    document.getElementById('tplSumVisible').textContent=vis;
+  }
+  function submitTemplate(){
+    if(!window._tplWs){toast('info','Select an originating workspace');return;}
+    if(!window._tplWaba){toast('info','Select a linked WABA to own the template');return;}
+    closeScrim('scrimTemplate');toast('success','Template submitted — Pending approval');
+  }
   function pickTemplate(t){window._template=t;closeAllMenus();var v=document.getElementById('templateVal');v.textContent=t;v.classList.remove('is-ph');}
   function revealCount(btn){var v=document.createElement('span');v.className='ap-pg-total__val';v.textContent='300';btn.replaceWith(v);}
   // Manage Keywords — match-type picker + add/remove rows
